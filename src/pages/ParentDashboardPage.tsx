@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { apiService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import type { Student, AttendanceRecord } from '../types';
@@ -117,7 +117,7 @@ export const ParentDashboardPage: React.FC = () => {
     return (
       <div className="flex h-[calc(100vh-4rem)] items-center justify-center bg-slate-50">
         <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent" />
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
           <p className="text-sm font-semibold text-slate-500">Retrieving student logs...</p>
         </div>
       </div>
@@ -128,13 +128,13 @@ export const ParentDashboardPage: React.FC = () => {
     <div className="max-w-6xl mx-auto space-y-8 pb-12">
       
       {/* Header Panel */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-emerald-900 to-emerald-800 p-6 rounded-2xl text-white shadow-lg border border-emerald-700/30">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-blue-900 to-blue-800 p-6 rounded-2xl text-white shadow-lg border border-blue-700/30">
         <div>
           <div className="flex items-center gap-2">
-            <GraduationCap className="h-8 w-8 text-emerald-350" />
+            <GraduationCap className="h-8 w-8 text-blue-300" />
             <h1 className="text-2xl font-extrabold tracking-tight">Parent Monitor Portal</h1>
           </div>
-          <p className="text-emerald-200 text-xs mt-1 font-medium">
+          <p className="text-blue-200 text-xs mt-1 font-medium">
             Welcome, <span className="font-bold text-white">{user?.full_name}</span>. Check your child's gate scans and current campus status.
           </p>
         </div>
@@ -168,7 +168,7 @@ export const ParentDashboardPage: React.FC = () => {
         <div className="max-w-md mx-auto py-8">
           <Card className="shadow-xl border border-slate-200/60 rounded-2xl">
             <CardHeader className="text-center pb-2">
-              <div className="mx-auto rounded-2xl bg-emerald-50 p-4 inline-flex border border-emerald-100 text-emerald-600 mb-2">
+              <div className="mx-auto rounded-2xl bg-blue-50 p-4 inline-flex border border-blue-100 text-blue-600 mb-2">
                 <LinkIcon className="h-10 w-10 animate-bounce" />
               </div>
               <CardTitle className="text-xl font-bold text-slate-800">Link Child Account</CardTitle>
@@ -207,7 +207,7 @@ export const ParentDashboardPage: React.FC = () => {
                       placeholder="e.g. 2026-000101"
                       value={studentNumber}
                       onChange={(e: React.ChangeEvent<HTMLInputElement>) => setStudentNumber(e.target.value)}
-                      className="w-full h-11 pl-9 pr-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-emerald-500 focus:border-emerald-500 text-slate-700 font-semibold text-sm"
+                      className="w-full h-11 pl-9 pr-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 text-slate-700 font-semibold text-sm"
                     />
                   </div>
                 </div>
@@ -223,7 +223,7 @@ export const ParentDashboardPage: React.FC = () => {
 
               {/* Demo Helper box */}
               <div className="rounded-xl bg-slate-50 border border-slate-200/40 p-3 text-xs">
-                <p className="font-bold text-slate-600 mb-1">💡 Sandbox Student IDs to test:</p>
+                <p className="font-bold text-slate-600 mb-1">ðŸ’¡ Sandbox Student IDs to test:</p>
                 <ul className="list-disc pl-4 space-y-0.5 text-slate-500">
                   <li><span className="font-semibold text-slate-700">2026-000101</span> (Maria Santos)</li>
                   <li><span className="font-semibold text-slate-700">2026-000102</span> (Jose Reyes)</li>
@@ -324,7 +324,7 @@ export const ParentDashboardPage: React.FC = () => {
                 <div className="space-y-2.5 pt-2 text-xs border-t border-slate-100/70">
                   <div className="flex justify-between">
                     <span className="text-slate-400 flex items-center gap-1 font-semibold"><BookOpen className="h-3.5 w-3.5" /> Course</span>
-                    <strong className="text-slate-700 font-bold">{student?.course} — {student?.section}</strong>
+                    <strong className="text-slate-700 font-bold">{student?.course} â€” {student?.section}</strong>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-400 flex items-center gap-1 font-semibold"><User className="h-3.5 w-3.5" /> Year Level</span>
@@ -370,7 +370,7 @@ export const ParentDashboardPage: React.FC = () => {
               
               <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
                 <div className="flex items-center gap-2">
-                  <Clock className="h-5 w-5 text-emerald-600" />
+                  <Clock className="h-5 w-5 text-blue-600" />
                   <div>
                     <h3 className="text-sm font-bold text-slate-800">Child Attendance Logs</h3>
                     <p className="text-[11px] text-slate-400">Complete historical card scans for your child.</p>
@@ -410,7 +410,7 @@ export const ParentDashboardPage: React.FC = () => {
                                 {log.time_in}
                               </span>
                             ) : (
-                              <span className="text-slate-350">—</span>
+                              <span className="text-slate-350">â€”</span>
                             )}
                           </td>
                           <td className="py-3.5 px-5 text-slate-600 font-semibold">
@@ -450,3 +450,5 @@ export const ParentDashboardPage: React.FC = () => {
     </div>
   );
 };
+
+

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { Card } from '../components/ui/Card';
 import { Table, TableRow, TableCell } from '../components/ui/Table';
@@ -42,7 +42,7 @@ export const AttendancePage: React.FC = () => {
   });
 
   const formatDateTime = (scanTime: string | undefined) => {
-    if (!scanTime) return { date: '—', time: '—' };
+    if (!scanTime) return { date: 'â€”', time: 'â€”' };
     const d = new Date(scanTime);
     return {
       date: d.toLocaleDateString('en-PH', { month: 'short', day: 'numeric', year: 'numeric' }),
@@ -71,7 +71,7 @@ export const AttendancePage: React.FC = () => {
 
   const exportToPDF = () => {
     const doc = new jsPDF() as any;
-    doc.text("Student Gate Monitoring — Gate Logs", 14, 15);
+    doc.text("Student Gate Monitoring â€” Gate Logs", 14, 15);
     doc.setFontSize(10);
     doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 22);
 
@@ -82,7 +82,7 @@ export const AttendancePage: React.FC = () => {
         return [
           r.student_number,
           `${r.last_name}, ${r.first_name}`,
-          `${r.grade_name} — ${r.section_name}`,
+          `${r.grade_name} â€” ${r.section_name}`,
           date, time, r.status,
         ];
       }),
@@ -129,7 +129,7 @@ export const AttendancePage: React.FC = () => {
             </span>
             <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
               placeholder="Search ID or name..."
-              className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+              className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
           </div>
 
           {/* Date */}
@@ -138,7 +138,7 @@ export const AttendancePage: React.FC = () => {
               <Calendar className="h-4 w-4 text-slate-400" />
             </span>
             <input type="date" value={filterDate} onChange={e => setFilterDate(e.target.value)}
-              className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500" />
+              className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500" />
           </div>
 
           {/* Grade */}
@@ -146,7 +146,7 @@ export const AttendancePage: React.FC = () => {
             <Filter className="h-4 w-4 text-slate-400 absolute left-3 pointer-events-none" />
             <select value={filterGrade}
               onChange={e => { setFilterGrade(e.target.value); setFilterSection('All Sections'); }}
-              className="block w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+              className="block w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
               {gradeNames.map(g => <option key={g} value={g}>{g}</option>)}
             </select>
           </div>
@@ -155,7 +155,7 @@ export const AttendancePage: React.FC = () => {
           <div className="relative flex items-center">
             <Filter className="h-4 w-4 text-slate-400 absolute left-3 pointer-events-none" />
             <select value={filterSection} onChange={e => setFilterSection(e.target.value)}
-              className="block w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+              className="block w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
               {sectionNames.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
@@ -164,7 +164,7 @@ export const AttendancePage: React.FC = () => {
           <div className="relative flex items-center">
             <Filter className="h-4 w-4 text-slate-400 absolute left-3 pointer-events-none" />
             <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)}
-              className="block w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500">
+              className="block w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
               {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
           </div>
@@ -219,3 +219,5 @@ export const AttendancePage: React.FC = () => {
     </div>
   );
 };
+
+

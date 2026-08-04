@@ -16,18 +16,67 @@ if (!empty($data->username) && !empty($data->password)) {
     $db = $database->getConnection();
 
     try {
-        $query = "SELECT admin_id, username, password, full_name, position, email
-                  FROM system_admins
-                  WHERE username = :username
-                  LIMIT 1";
-        $stmt = $db->prepare($query);
+        // 1. Try checking the users table (Admin / Guard / Parent)
+        $userQuery = "SELECT id, username, password, full_name, role, active
+                      FROM users
+                      WHERE username = :username
+                      LIMIT 1";
+        $stmt = $db->prepare($userQuery);
         $stmt->bindParam(":username", $data->username);
         $stmt->execute();
 
         if ($stmt->rowCount() > 0) {
             $row = $stmt->fetch();
 
-            // Support plain-text or bcrypt
+            if (isset($row['active']) && (int)$row['active'] === 0) {
+                http_response_code(403);
+                echo json_encode(["success" => false, "message" => "Account is inactive."]);
+                exit;
+            }
+
+            $valid = ($data->password === $row['password'])
+                  || password_verify($data->password, $row['password']);
+
+            if ($valid) {
+                $token = base64_encode(json_encode([
+                    "id"   => $row['id'],
+                    "role" => $row['role'],
+                    "exp"  => time() + 3600
+                ]));
+
+                http_response_code(200);
+                echo json_encode([
+                    "success" => true,
+                    "token"   => $token,
+                    "user"    => [
+                        "id"        => (string)$row['id'],
+                        "username"  => $row['username'],
+                        "full_name" => $row['full_name'],
+                        "role"      => $row['role'],
+                        "position"  => $row['role'] === 'guard' ? 'Gate Security Officer' : 'System User',
+                        "email"     => '',
+                    ]
+                ]);
+                exit;
+            } else {
+                http_response_code(401);
+                echo json_encode(["success" => false, "message" => "Invalid password."]);
+                exit;
+            }
+        }
+
+        // 2. Try checking the system_admins table
+        $adminQuery = "SELECT admin_id, username, password, full_name, position, email
+                       FROM system_admins
+                       WHERE username = :username
+                       LIMIT 1";
+        $stmt = $db->prepare($adminQuery);
+        $stmt->bindParam(":username", $data->username);
+        $stmt->execute();
+
+        if ($stmt->rowCount() > 0) {
+            $row = $stmt->fetch();
+
             $valid = ($data->password === $row['password'])
                   || password_verify($data->password, $row['password']);
 
@@ -43,7 +92,7 @@ if (!empty($data->username) && !empty($data->password)) {
                     "success" => true,
                     "token"   => $token,
                     "user"    => [
-                        "id"        => $row['admin_id'],
+                        "id"        => (string)$row['admin_id'],
                         "username"  => $row['username'],
                         "full_name" => $row['full_name'],
                         "role"      => "admin",
@@ -51,14 +100,17 @@ if (!empty($data->username) && !empty($data->password)) {
                         "email"     => $row['email'],
                     ]
                 ]);
+                exit;
             } else {
                 http_response_code(401);
                 echo json_encode(["success" => false, "message" => "Invalid password."]);
+                exit;
             }
-        } else {
-            http_response_code(401);
-            echo json_encode(["success" => false, "message" => "Invalid username."]);
         }
+
+        http_response_code(401);
+        echo json_encode(["success" => false, "message" => "Invalid username or password."]);
+
     } catch (PDOException $e) {
         http_response_code(500);
         echo json_encode(["success" => false, "message" => "Server error: " . $e->getMessage()]);

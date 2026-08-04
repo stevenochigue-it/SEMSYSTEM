@@ -2,13 +2,14 @@
 
 @layer base {
   :root {
-    --color-primary: #16a34a;
-    --color-primary-dark: #15803d;
-    --color-primary-light: #22c55e;
-    --color-primary-50: #f0fdf4;
-    --color-primary-100: #dcfce7;
-    --color-sidebar-bg: #0f2418;
-    --color-sidebar-text: #d1fae5;
+    /* SINHS Uniform Colors: Sky Blue shirt + Dark Navy pants/skirt */
+    --color-primary: #2879c8;         /* cerulean blue - shirt color */
+    --color-primary-dark: #1a5fa0;    /* deeper blue */
+    --color-primary-light: #5aaee8;   /* lighter sky blue */
+    --color-primary-50: #eff6ff;      /* very light blue tint */
+    --color-primary-100: #dbeafe;     /* light blue */
+    --color-sidebar-bg: #0b1a3d;      /* dark navy - pants/skirt color */
+    --color-sidebar-text: #bfdbfe;    /* soft sky blue text */
   }
 
   * {

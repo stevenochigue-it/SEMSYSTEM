@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../components/ui/Card';
 import { Table, TableRow, TableCell } from '../components/ui/Table';
@@ -175,7 +175,7 @@ export const ReportsPage: React.FC = () => {
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-2.5 text-xs font-bold uppercase tracking-wider border-b-2 transition-all ${
               activeTab === tab
-                ? 'border-emerald-600 text-emerald-600 font-extrabold'
+                ? 'border-blue-600 text-blue-600 font-extrabold'
                 : 'border-transparent text-slate-400 hover:text-slate-650'
             }`}
           >
@@ -196,7 +196,7 @@ export const ReportsPage: React.FC = () => {
               value={studentSearch}
               onChange={(e) => setStudentSearch(e.target.value)}
               placeholder="Search student name or number..."
-              className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
@@ -221,11 +221,11 @@ export const ReportsPage: React.FC = () => {
 
           {/* Selected Student profile info */}
           {selectedStudentObj && (
-            <div className="flex items-center gap-3.5 bg-emerald-50/50 border border-emerald-100 rounded-xl p-3.5 text-xs text-slate-700">
-              <Award className="h-5 w-5 text-emerald-600" />
+            <div className="flex items-center gap-3.5 bg-blue-50/50 border border-blue-100 rounded-xl p-3.5 text-xs text-slate-700">
+              <Award className="h-5 w-5 text-blue-600" />
               <div>
                 <p className="font-extrabold text-slate-800 uppercase">{selectedStudentObj.first_name} {selectedStudentObj.last_name}</p>
-                <p className="mt-1">ID: {selectedStudentObj.student_number} • Course: {selectedStudentObj.course} • Section: {selectedStudentObj.section}</p>
+                <p className="mt-1">ID: {selectedStudentObj.student_number} â€¢ Course: {selectedStudentObj.course} â€¢ Section: {selectedStudentObj.section}</p>
               </div>
             </div>
           )}
@@ -234,13 +234,13 @@ export const ReportsPage: React.FC = () => {
 
       {/* Grid: Overview Stats */}
       <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
-        <Card className="bg-emerald-50/20 border border-emerald-100/50">
+        <Card className="bg-blue-50/20 border border-blue-100/50">
           <div className="flex items-center justify-between p-2">
             <div>
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Unique Students Scanned</p>
               <h3 className="text-2xl font-extrabold text-slate-850 mt-1">{uniqueStudents}</h3>
             </div>
-            <FileText className="h-6 w-6 text-emerald-600" />
+            <FileText className="h-6 w-6 text-blue-600" />
           </div>
         </Card>
 
@@ -298,7 +298,7 @@ export const ReportsPage: React.FC = () => {
               <TableRow key={record.id}>
                 <TableCell className="font-semibold text-slate-805">{record.student_number}</TableCell>
                 <TableCell className="font-bold text-slate-700">{record.student_name}</TableCell>
-                <TableCell className="text-xs text-slate-550">{record.course} — {record.year_level}</TableCell>
+                <TableCell className="text-xs text-slate-550">{record.course} â€” {record.year_level}</TableCell>
                 <TableCell className="text-xs text-slate-500">{record.date}</TableCell>
                 <TableCell className="font-semibold">{record.time_in || 'N/A'}</TableCell>
                 <TableCell className="font-semibold">{record.time_out || 'N/A'}</TableCell>
@@ -322,3 +322,5 @@ export const ReportsPage: React.FC = () => {
     </div>
   );
 };
+
+

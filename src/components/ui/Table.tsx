@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 interface TableProps {
   headers: string[];
@@ -55,3 +55,5 @@ export const TableCell: React.FC<TableCellProps> = ({
     </td>
   );
 };
+
+

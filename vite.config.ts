@@ -12,7 +12,7 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost',
         changeOrigin: true,
-        rewrite: (path) => '/SEM-System/backend/api' + path.slice(4),
+        rewrite: (path) => '/SEMSYSTEM/backend/api' + path.slice(4),
       },
     },
   },

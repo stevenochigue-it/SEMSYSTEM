@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { StudentTable } from '../components/students/StudentTable';
 import { StudentForm } from '../components/students/StudentForm';
@@ -82,7 +82,7 @@ export const StudentsPage: React.FC = () => {
           <Button
             variant="outline" size="md"
             onClick={() => setImportOpen(true)}
-            className="border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+            className="border-blue-300 text-blue-700 hover:bg-blue-50"
           >
             <FileUp className="h-4 w-4" />
             Import Excel
@@ -109,7 +109,7 @@ export const StudentsPage: React.FC = () => {
               type="text" value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               placeholder="Search by ID or name..."
-              className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
 
@@ -119,7 +119,7 @@ export const StudentsPage: React.FC = () => {
             <select
               value={selectedGrade}
               onChange={e => { setSelectedGrade(e.target.value); setSelectedSection('All Sections'); }}
-              className="block w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="block w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               {gradeNames.map(g => <option key={g} value={g}>{g}</option>)}
             </select>
@@ -131,7 +131,7 @@ export const StudentsPage: React.FC = () => {
             <select
               value={selectedSection}
               onChange={e => setSelectedSection(e.target.value)}
-              className="block w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+              className="block w-full rounded-lg border border-slate-200 bg-white pl-9 pr-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
               {sectionNames.map(s => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -153,7 +153,7 @@ export const StudentsPage: React.FC = () => {
         onDelete={handleDelete}
       />
 
-      {/* ── Modals ── */}
+      {/* â”€â”€ Modals â”€â”€ */}
 
       {/* 1. Register / Edit Student */}
       <Modal isOpen={formOpen} onClose={() => setFormOpen(false)}
@@ -193,3 +193,5 @@ export const StudentsPage: React.FC = () => {
     </div>
   );
 };
+
+

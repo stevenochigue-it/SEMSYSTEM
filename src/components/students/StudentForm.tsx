@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import type { Student, Section } from '../../types';
 import { Button } from '../ui/Button';
 import { Upload, X, User } from 'lucide-react';
@@ -116,7 +116,7 @@ export const StudentForm: React.FC<StudentFormProps> = ({ student, sections, onS
             type="text" required value={studentNumber}
             onChange={e => setStudentNumber(e.target.value)}
             placeholder="e.g. 2025001"
-            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
@@ -129,7 +129,7 @@ export const StudentForm: React.FC<StudentFormProps> = ({ student, sections, onS
             type="text" required value={firstName}
             onChange={e => setFirstName(e.target.value)}
             placeholder="e.g. Juan"
-            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
@@ -142,7 +142,7 @@ export const StudentForm: React.FC<StudentFormProps> = ({ student, sections, onS
             type="text" required value={lastName}
             onChange={e => setLastName(e.target.value)}
             placeholder="e.g. Dela Cruz"
-            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
@@ -155,7 +155,7 @@ export const StudentForm: React.FC<StudentFormProps> = ({ student, sections, onS
             type="text" value={middleName}
             onChange={e => setMiddleName(e.target.value)}
             placeholder="e.g. G. or Gomez"
-            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           />
         </div>
 
@@ -167,13 +167,13 @@ export const StudentForm: React.FC<StudentFormProps> = ({ student, sections, onS
           <select
             value={sectionId}
             onChange={e => setSectionId(Number(e.target.value))}
-            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
           >
             {Object.entries(grouped).map(([gradeName, sects]) => (
               <optgroup key={gradeName} label={gradeName}>
                 {sects.map(s => (
                   <option key={s.section_id} value={s.section_id}>
-                    {gradeName} — {s.section_name}
+                    {gradeName} â€” {s.section_name}
                   </option>
                 ))}
               </optgroup>
@@ -191,3 +191,5 @@ export const StudentForm: React.FC<StudentFormProps> = ({ student, sections, onS
     </form>
   );
 };
+
+

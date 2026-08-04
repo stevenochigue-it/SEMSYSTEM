@@ -1,4 +1,4 @@
-import type {
+﻿import type {
   Student, GateLog, SystemAdmin, Section,
   ScanResult, DashboardStats, ChartDataPoint,
   LoginCredentials,
@@ -25,10 +25,10 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export const apiService = {
-  // ─── No-op init (kept for DataContext compatibility) ──────────────────────
+  // â”€â”€â”€ No-op init (kept for DataContext compatibility) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   init() {},
 
-  // ─── Auth ─────────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async login(credentials: LoginCredentials): Promise<{ token: string; user: any }> {
     return fetchJson<{ token: string; user: any }>('/auth/login.php', {
       method: 'POST',
@@ -36,17 +36,17 @@ export const apiService = {
     });
   },
 
-  // ─── Google auth stub (parent portal kept for UI compat) ─────────────────
+  // â”€â”€â”€ Google auth stub (parent portal kept for UI compat) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async loginWithGoogle(_googleId: string, _googleEmail: string, _fullName: string): Promise<{ token: string; user: any }> {
     throw new Error('Google login is not supported in this system.');
   },
 
-  // ─── Sections ─────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Sections â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async getSections(): Promise<Section[]> {
     return fetchJson<Section[]>('/sections/index.php');
   },
 
-  // ─── Students ─────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Students â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async getStudents(): Promise<Student[]> {
     return fetchJson<Student[]>('/students/index.php');
   },
@@ -69,7 +69,7 @@ export const apiService = {
     await fetchJson<void>(`/students/index.php?id=${id}`, { method: 'DELETE' });
   },
 
-  // ─── Bulk Import ──────────────────────────────────────────────────────────
+  // â”€â”€â”€ Bulk Import â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async importStudents(students: any[]): Promise<{ success: boolean; imported: number; skipped: number; errors: string[]; message: string }> {
     return fetchJson('/students/import.php', {
       method: 'POST',
@@ -77,7 +77,7 @@ export const apiService = {
     });
   },
 
-  // ─── QR Scan ──────────────────────────────────────────────────────────────
+  // â”€â”€â”€ QR Scan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async scanQRCode(qrValue: string): Promise<ScanResult> {
     return fetchJson<ScanResult>('/attendance/scan.php', {
       method: 'POST',
@@ -85,12 +85,12 @@ export const apiService = {
     });
   },
 
-  // ─── Gate Logs ────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Gate Logs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async getAttendance(): Promise<GateLog[]> {
     return fetchJson<GateLog[]>('/attendance/index.php');
   },
 
-  // ─── Dashboard ────────────────────────────────────────────────────────────
+  // â”€â”€â”€ Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async getDashboardStats(): Promise<DashboardStats> {
     return fetchJson<DashboardStats>('/dashboard/stats.php');
   },
@@ -100,12 +100,12 @@ export const apiService = {
   },
 
   async resetInvalidScans(): Promise<void> {
-    // No-op in new schema — gate_logs doesn't track invalid scans separately
+    // No-op in new schema â€” gate_logs doesn't track invalid scans separately
   },
 
-  // ─── System Admins (replaces Users) ──────────────────────────────────────
+  // â”€â”€â”€ System Admins (replaces Users) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async getUsers(): Promise<SystemAdmin[]> {
-    // Returns empty — admin management handled separately
+    // Returns empty â€” admin management handled separately
     return [];
   },
 
@@ -121,7 +121,7 @@ export const apiService = {
     throw new Error('Use admin management endpoint instead.');
   },
 
-  // ─── Parent portal stubs ──────────────────────────────────────────────────
+  // â”€â”€â”€ Parent portal stubs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   async linkChild(_studentNumber: string): Promise<{ success: boolean; message: string }> {
     return { success: false, message: 'Not supported in this version.' };
   },
@@ -130,3 +130,5 @@ export const apiService = {
     return { linked: false };
   },
 };
+
+

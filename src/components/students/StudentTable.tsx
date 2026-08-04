@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Student } from '../../types';
 import { Table, TableRow, TableCell } from '../ui/Table';
 import { Badge } from '../ui/Badge';
@@ -55,7 +55,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
             {/* Status (last gate log) */}
             <TableCell>
               <Badge variant={student.last_status === 'ENTRY' ? 'success' : 'secondary'}>
-                {student.last_status === 'ENTRY' ? '🟢 Inside' : '⚪ Outside'}
+                {student.last_status === 'ENTRY' ? 'ðŸŸ¢ Inside' : 'âšª Outside'}
               </Badge>
             </TableCell>
 
@@ -66,7 +66,7 @@ export const StudentTable: React.FC<StudentTableProps> = ({
                   <Eye className="w-4 h-4 text-slate-500" />
                 </Button>
                 <Button variant="outline" size="sm" title="Generate/Print QR Code" onClick={() => onViewQR(student)}>
-                  <QrCode className="w-4 h-4 text-emerald-600" />
+                  <QrCode className="w-4 h-4 text-blue-600" />
                 </Button>
                 <Button variant="outline" size="sm" title="Edit Student" onClick={() => onEdit(student)}>
                   <Edit className="w-4 h-4 text-blue-600" />
@@ -88,3 +88,5 @@ export const StudentTable: React.FC<StudentTableProps> = ({
     </Table>
   );
 };
+
+

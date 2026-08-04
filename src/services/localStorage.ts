@@ -1,7 +1,7 @@
-import type { Student, AttendanceRecord, User, ScanResult, DashboardStats, ChartDataPoint } from '../types';
+﻿import type { Student, AttendanceRecord, User, ScanResult, DashboardStats, ChartDataPoint } from '../types';
 import { format, subDays } from '../utils/dateTime';
 
-// ─── Storage Keys ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Storage Keys â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const KEYS = {
   students: 'sem_students',
   attendance: 'sem_attendance',
@@ -9,7 +9,7 @@ const KEYS = {
   invalidScans: 'sem_invalid_scans',
 };
 
-// ─── Seed Data ────────────────-----------------------------------------------
+// â”€â”€â”€ Seed Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€-----------------------------------------------
 
 const SEED_STUDENTS: Student[] = [
   { id: '1', student_number: '2026-000101', first_name: 'Maria', last_name: 'Santos', course: 'BSIT', year_level: '3rd Year', section: 'A', contact_number: '09171234567', guardian_name: 'Juan Santos', photo: '', qr_value: '2026-000101', created_at: '2026-01-15', status: 'outside' },
@@ -59,7 +59,7 @@ function generateSeedAttendance(): AttendanceRecord[] {
   return records;
 }
 
-// ─── Init Storage ────────────────────────────────────────────────────────────
+// â”€â”€â”€ Init Storage â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function initStorage(): void {
   if (!localStorage.getItem(KEYS.students)) {
     localStorage.setItem(KEYS.students, JSON.stringify(SEED_STUDENTS));
@@ -75,7 +75,7 @@ export function initStorage(): void {
   }
 }
 
-// ─── Students CRUD ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Students CRUD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function getStudents(): Student[] {
   return JSON.parse(localStorage.getItem(KEYS.students) || '[]');
 }
@@ -116,7 +116,7 @@ export function deleteStudent(id: string): boolean {
   return true;
 }
 
-// ─── Attendance ──────────────────────────────────────────────────────────────
+// â”€â”€â”€ Attendance â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function getAttendance(): AttendanceRecord[] {
   return JSON.parse(localStorage.getItem(KEYS.attendance) || '[]');
 }
@@ -161,7 +161,7 @@ export function processQRScan(qrValue: string): ScanResult {
     const studentId = student.id || student.student_id || '';
     if (studentId) updateStudent(studentId, { status: 'inside' });
 
-    return { success: true, student: { ...student, status: 'inside' }, attendance: newRecord, message: 'Access Granted — Time In Recorded', action: 'time_in' };
+    return { success: true, student: { ...student, status: 'inside' }, attendance: newRecord, message: 'Access Granted â€” Time In Recorded', action: 'time_in' };
   } else {
     // Second scan = Time Out
     const idx = attendance.findIndex(r => r.id === todayRecord.id);
@@ -171,7 +171,7 @@ export function processQRScan(qrValue: string): ScanResult {
     const studentId = student.id || student.student_id || '';
     if (studentId) updateStudent(studentId, { status: 'outside' });
 
-    return { success: true, student: { ...student, status: 'outside' }, attendance: attendance[idx], message: 'Access Granted — Time Out Recorded', action: 'time_out' };
+    return { success: true, student: { ...student, status: 'outside' }, attendance: attendance[idx], message: 'Access Granted â€” Time Out Recorded', action: 'time_out' };
   }
 }
 
@@ -183,7 +183,7 @@ export function resetInvalidScans(): void {
   localStorage.setItem(KEYS.invalidScans, '0');
 }
 
-// ─── Dashboard Stats ─────────────────────────────────────────────────────────
+// â”€â”€â”€ Dashboard Stats â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function getDashboardStats(): DashboardStats {
   const students = getStudents();
   const today = getTodayAttendance();
@@ -217,7 +217,7 @@ export function getChartData(): ChartDataPoint[] {
   return result;
 }
 
-// ─── Users CRUD ───────────────────────────────────────────────────────────────
+// â”€â”€â”€ Users CRUD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function getUsers(): User[] {
   return JSON.parse(localStorage.getItem(KEYS.users) || '[]');
 }
@@ -256,7 +256,7 @@ export function deleteUser(id: string): boolean {
   return true;
 }
 
-// ─── Parent Portal Mock Operations ──────────────────────────────────────────
+// â”€â”€â”€ Parent Portal Mock Operations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 export function googleAuthMock(googleId: string, googleEmail: string, fullName: string): User {
   const users = getUsers();
   
@@ -345,3 +345,5 @@ export function getChildStatusMock(userId: string): any {
 
 // Re-export for convenience
 export { format, subDays };
+
+

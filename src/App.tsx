@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider } from './context/DataContext';
@@ -10,7 +10,6 @@ import { GateMonitorPage } from './pages/GateMonitorPage';
 import { AttendancePage } from './pages/AttendancePage';
 import { ReportsPage } from './pages/ReportsPage';
 import { UserManagementPage } from './pages/UserManagementPage';
-import { ParentDashboardPage } from './pages/ParentDashboardPage';
 
 // Helper component for protecting authenticated routes
 const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: string[] }> = ({ children, allowedRoles }) => {
@@ -19,7 +18,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: strin
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-50">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-emerald-600 border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
       </div>
     );
   }
@@ -28,11 +27,23 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode; allowedRoles?: strin
     return <Navigate to="/login" replace />;
   }
 
+  // Handle unauthorized role attempts
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    if (user.role === 'parent') {
-      return <Navigate to="/parent-dashboard" replace />;
+    if (user.role === 'guard') {
+      return <Navigate to="/gate-monitor" replace />;
     }
     return <Navigate to="/dashboard" replace />;
+  }
+
+  // Guard role is rendered in standalone Gate Terminal view without Admin Sidebar
+  if (user.role === 'guard') {
+    return (
+      <div className="min-h-screen bg-slate-100 p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
+          {children}
+        </div>
+      </div>
+    );
   }
 
   return <Layout>{children}</Layout>;
@@ -44,22 +55,16 @@ function App() {
       <AuthProvider>
         <DataProvider>
           <Routes>
-            {/* Login page */}
+            {/* Login portals */}
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/gate-login" element={<LoginPage />} />
+            <Route path="/admin-login" element={<LoginPage />} />
 
             {/* Authenticated pages */}
             <Route
-              path="/parent-dashboard"
-              element={
-                <ProtectedRoute allowedRoles={['parent']}>
-                  <ParentDashboardPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
               path="/dashboard"
               element={
-                <ProtectedRoute allowedRoles={['admin', 'guard']}>
+                <ProtectedRoute allowedRoles={['admin']}>
                   <DashboardPage />
                 </ProtectedRoute>
               }
@@ -75,7 +80,7 @@ function App() {
             <Route
               path="/attendance"
               element={
-                <ProtectedRoute allowedRoles={['admin', 'guard']}>
+                <ProtectedRoute allowedRoles={['admin']}>
                   <AttendancePage />
                 </ProtectedRoute>
               }
@@ -99,7 +104,7 @@ function App() {
             <Route
               path="/gate-monitor"
               element={
-                <ProtectedRoute allowedRoles={['admin', 'guard']}>
+                <ProtectedRoute allowedRoles={['guard']}>
                   <GateMonitorPage />
                 </ProtectedRoute>
               }
@@ -116,3 +121,5 @@ function App() {
 }
 
 export default App;
+
+

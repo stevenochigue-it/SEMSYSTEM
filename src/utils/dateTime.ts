@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Simple Date/Time helper functions to avoid loading huge external libraries.
  */
 
@@ -37,3 +37,5 @@ export function formatLocalDate(dateStr: string): string {
     day: 'numeric'
   });
 }
+
+

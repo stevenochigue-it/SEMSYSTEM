@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import type { Student, GateLog } from '../../types';
 import { Badge } from '../ui/Badge';
 import { Card } from '../ui/Card';
@@ -40,14 +40,14 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ student, attenda
               {student.first_name} {student.middle_name ? `${student.middle_name} ` : ''}{student.last_name}
             </h2>
             <Badge variant={student.last_status === 'ENTRY' ? 'success' : 'secondary'} className="self-center md:self-auto">
-              {student.last_status === 'ENTRY' ? '🟢 Currently Inside' : '⚪ Outside School'}
+              {student.last_status === 'ENTRY' ? 'ðŸŸ¢ Currently Inside' : 'âšª Outside School'}
             </Badge>
           </div>
-          <p className="text-sm font-bold text-emerald-600 font-mono">ID: {student.student_number}</p>
+          <p className="text-sm font-bold text-blue-600 font-mono">ID: {student.student_number}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5 text-xs text-slate-550 font-medium">
             <div className="flex items-center gap-2">
               <GraduationCap className="h-4 w-4 text-slate-400" />
-              <span>{student.grade_name} — {student.section_name}</span>
+              <span>{student.grade_name} â€” {student.section_name}</span>
             </div>
             {student.created_at && (
               <div className="flex items-center gap-2">
@@ -79,14 +79,14 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ student, attenda
             {recentLogs.length > 0 ? (
               recentLogs.map((log) => {
                 const isEntry = log.status === 'ENTRY';
-                const dateStr = log.scan_time ? new Date(log.scan_time).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' }) : '—';
-                const timeStr = log.scan_time ? new Date(log.scan_time).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }) : '—';
+                const dateStr = log.scan_time ? new Date(log.scan_time).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' }) : 'â€”';
+                const timeStr = log.scan_time ? new Date(log.scan_time).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }) : 'â€”';
                 return (
                   <Card key={log.log_id} className="p-3.5 border-slate-100 hover:border-slate-200 bg-white">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {isEntry
-                          ? <LogIn className="h-4 w-4 text-emerald-500" />
+                          ? <LogIn className="h-4 w-4 text-blue-500" />
                           : <LogOut className="h-4 w-4 text-orange-400" />}
                         <Badge variant={isEntry ? 'success' : 'secondary'} className="text-[10px]">
                           {log.status}
@@ -118,3 +118,5 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ student, attenda
     </div>
   );
 };
+
+

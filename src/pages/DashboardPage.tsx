@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useData } from '../context/DataContext';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
@@ -61,7 +61,7 @@ export const DashboardPage: React.FC = () => {
         {/* Live Clock / Refresh Button */}
         <div className="flex items-center gap-3 self-start md:self-auto">
           <div className="flex items-center gap-2 rounded-xl bg-white border border-slate-200 px-4 py-2 text-sm shadow-sm font-semibold text-slate-700">
-            <Clock className="h-4 w-4 text-emerald-600 animate-pulse" />
+            <Clock className="h-4 w-4 text-blue-600 animate-pulse" />
             <span>{format(currentTime, 'hh:mm:ss A')}</span>
           </div>
           <Button variant="outline" size="md" onClick={handleRefresh}>
@@ -75,13 +75,13 @@ export const DashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-6">
         
         {/* 1. Total Students */}
-        <Card className="hover:shadow-md border-l-4 border-l-emerald-600">
+        <Card className="hover:shadow-md border-l-4 border-l-blue-600">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Students</p>
               <h3 className="text-2xl font-extrabold text-slate-800 mt-1">{stats?.totalStudents || 0}</h3>
             </div>
-            <div className="rounded-lg bg-emerald-50 p-2.5 text-emerald-600">
+            <div className="rounded-lg bg-blue-50 p-2.5 text-blue-600">
               <Users className="h-5 w-5" />
             </div>
           </div>
@@ -168,7 +168,7 @@ export const DashboardPage: React.FC = () => {
               <CardTitle>Attendance Trends</CardTitle>
               <CardDescription>Gate entries and exits for the last 7 active days.</CardDescription>
             </div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded-md">
               <TrendingUp className="h-3.5 w-3.5" />
               Live Feed
             </div>
@@ -226,7 +226,7 @@ export const DashboardPage: React.FC = () => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search today's scans..."
-                className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
 
@@ -240,7 +240,7 @@ export const DashboardPage: React.FC = () => {
                   >
                     <div>
                       <p className="text-xs font-bold text-slate-800">{record.student_name}</p>
-                      <p className="text-[10px] text-slate-400 mt-0.5">{record.student_number} • {record.course}</p>
+                      <p className="text-[10px] text-slate-400 mt-0.5">{record.student_number} â€¢ {record.course}</p>
                     </div>
                     <div className="text-right">
                       <Badge variant={record.time_out ? 'secondary' : 'success'}>
@@ -269,3 +269,5 @@ export const DashboardPage: React.FC = () => {
     </div>
   );
 };
+
+

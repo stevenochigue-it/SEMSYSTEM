@@ -1,7 +1,7 @@
-import React, { useRef } from 'react';
+﻿import React, { useRef } from 'react';
 import type { Student } from '../../types';
 import { QRCodeSVG } from 'qrcode.react';
-import { GraduationCap, UserCheck, ShieldCheck, Printer } from 'lucide-react';
+import { UserCheck, ShieldCheck, Printer } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { useReactToPrint } from 'react-to-print';
 
@@ -27,12 +27,14 @@ export const QRCard: React.FC<QRCardProps> = ({ student }) => {
           style={{ printColorAdjust: 'exact', WebkitPrintColorAdjust: 'exact' }}
         >
           {/* Card Header branding */}
-          <div className="flex items-center gap-2.5 pb-3 border-b-2 border-emerald-600">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-white">
-              <GraduationCap className="h-7 w-7" />
-            </div>
+          <div className="flex items-center gap-2.5 pb-3 border-b-2 border-blue-600">
+            <img
+              src="/school-logo.jpg"
+              alt="SINHS Logo"
+              className="h-11 w-11 shrink-0 rounded-xl object-cover border-2 border-blue-500"
+            />
             <div>
-              <h2 className="text-[11px] font-extrabold tracking-wider text-emerald-800 uppercase leading-tight">
+              <h2 className="text-[11px] font-extrabold tracking-wider text-blue-800 uppercase leading-tight">
                 San Isidro National High School
               </h2>
               <p className="text-[9px] text-slate-500 font-bold tracking-widest uppercase mt-1">
@@ -50,7 +52,7 @@ export const QRCard: React.FC<QRCardProps> = ({ student }) => {
                 <img
                   src={student.photo}
                   alt={student.first_name}
-                  className="w-28 h-28 object-cover rounded-xl border-2 border-emerald-500 shadow-md"
+                  className="w-28 h-28 object-cover rounded-xl border-2 border-blue-500 shadow-md"
                 />
               ) : (
                 <div className="w-28 h-28 rounded-xl bg-slate-100 border-2 border-dashed border-slate-300 flex flex-col items-center justify-center text-slate-400">
@@ -59,7 +61,7 @@ export const QRCard: React.FC<QRCardProps> = ({ student }) => {
                 </div>
               )}
               {/* Active Gate Access Indicator */}
-              <div className="absolute -bottom-1.5 -right-1.5 bg-emerald-500 text-white rounded-full p-1 shadow-md border border-white">
+              <div className="absolute -bottom-1.5 -right-1.5 bg-blue-500 text-white rounded-full p-1 shadow-md border border-white">
                 <ShieldCheck className="w-4 h-4" />
               </div>
             </div>
@@ -69,11 +71,11 @@ export const QRCard: React.FC<QRCardProps> = ({ student }) => {
               <h3 className="text-base font-extrabold tracking-tight text-slate-850 uppercase">
                 {student.first_name} {student.last_name}
               </h3>
-              <p className="text-xs font-bold text-emerald-600 mt-0.5">
+              <p className="text-xs font-bold text-blue-600 mt-0.5">
                 ID: {student.student_number}
               </p>
               <p className="text-[10px] text-slate-500 font-semibold uppercase mt-1">
-                {student.grade_name} — {student.section_name}
+                {student.grade_name} â€” {student.section_name}
               </p>
             </div>
 
@@ -115,3 +117,5 @@ export const QRCard: React.FC<QRCardProps> = ({ student }) => {
     </div>
   );
 };
+
+

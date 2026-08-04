@@ -1,15 +1,13 @@
-import React from 'react';
+﻿import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard,
   Users,
-  ScanLine,
   CalendarDays,
   FileBarChart,
   UserCheck,
-  LogOut,
-  GraduationCap
+  LogOut
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -23,13 +21,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
 
   if (!user) return null;
 
-  const menuItems = user.role === 'parent' ? [
-    {
-      name: 'Parent Monitor',
-      path: '/parent-dashboard',
-      icon: LayoutDashboard,
-    }
-  ] : [
+  const menuItems = [
     {
       name: 'Dashboard',
       path: '/dashboard',
@@ -40,11 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       path: '/students',
       icon: Users,
     },
-    {
-      name: 'Gate Monitor',
-      path: '/gate-monitor',
-      icon: ScanLine,
-    },
+
     {
       name: 'Attendance Log',
       path: '/attendance',
@@ -80,23 +68,27 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         }`}
       >
         {/* Brand */}
-        <div className="flex h-16 items-center gap-3 border-b border-emerald-950 px-6">
-          <GraduationCap className="h-8 w-8 text-emerald-400" />
+        <div className="flex h-16 items-center gap-3 border-b border-blue-950 px-4">
+          <img
+            src="/school-logo.jpg"
+            alt="SINHS Logo"
+            className="h-10 w-10 rounded-full object-cover border-2 border-blue-400/60 shrink-0"
+          />
           <div>
             <h1 className="text-sm font-bold tracking-wider text-white uppercase">SINHS Gates</h1>
-            <p className="text-[10px] text-emerald-400 font-semibold uppercase">QR Entry System</p>
+            <p className="text-[10px] text-blue-400 font-semibold uppercase">QR Entry System</p>
           </div>
         </div>
 
         {/* User Info Card */}
-        <div className="mx-4 my-6 rounded-xl bg-emerald-950/40 p-4 border border-emerald-900/30">
+        <div className="mx-4 my-6 rounded-xl bg-blue-950/40 p-4 border border-blue-900/30">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-800 text-white font-bold uppercase">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-800 text-white font-bold uppercase">
               {user.username.slice(0, 2)}
             </div>
             <div className="overflow-hidden">
               <h2 className="text-xs font-semibold text-white truncate">{user.full_name}</h2>
-              <p className="text-[10px] text-emerald-400 font-medium capitalize mt-0.5">{user.role} Account</p>
+              <p className="text-[10px] text-blue-400 font-medium capitalize mt-0.5">{user.role} Account</p>
             </div>
           </div>
         </div>
@@ -113,11 +105,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
                 onClick={() => setIsOpen(false)}
                 className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
                   isActive
-                    ? 'bg-emerald-600 text-white shadow-lg shadow-emerald-900/20'
-                    : 'hover:bg-emerald-900/35 hover:text-white'
+                    ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20'
+                    : 'hover:bg-blue-900/35 hover:text-white'
                 }`}
               >
-                <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-emerald-400'}`} />
+                <Icon className={`h-5 w-5 ${isActive ? 'text-white' : 'text-blue-400'}`} />
                 {item.name}
               </Link>
             );
@@ -125,10 +117,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         </nav>
 
         {/* Footer / Logout */}
-        <div className="border-t border-emerald-950 p-4">
+        <div className="border-t border-blue-950 p-4">
           <button
             onClick={logout}
-            className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-emerald-400 transition-colors hover:bg-red-950/20 hover:text-red-300"
+            className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-blue-400 transition-colors hover:bg-red-950/20 hover:text-red-300"
           >
             <LogOut className="h-5 w-5" />
             Logout
@@ -138,3 +130,5 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
     </>
   );
 };
+
+

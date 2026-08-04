@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+﻿import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { Student, GateLog, SystemAdmin, Section, DashboardStats, ChartDataPoint, ScanResult } from '../types';
 import { apiService } from '../services/api';
 
@@ -103,3 +103,5 @@ export const useData = () => {
   if (context === undefined) throw new Error('useData must be used within a DataProvider');
   return context;
 };
+
+

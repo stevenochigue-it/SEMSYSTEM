@@ -68,7 +68,7 @@ CREATE TABLE students (
     first_name VARCHAR(50) NOT NULL,
     middle_name VARCHAR(50),
     last_name VARCHAR(50) NOT NULL,
-    photo VARCHAR(255),
+    photo LONGTEXT,
 
     section_id INT NOT NULL,
     admin_id INT NOT NULL,
@@ -197,4 +197,6 @@ VALUES (1, 'ENTRY'), (2, 'ENTRY'), (3, 'ENTRY'), (4, 'ENTRY');
 -- USERS (Admin / Guard / Parent)
 INSERT INTO users (username, password, full_name, role, active)
 VALUES
-('admin', '$2y$10$QYguvqSpl01t7yRhD3U.veSF2rXX.ZvnT7H/Bnkh9upZ1ssqxUWQa', 'System Administrator', 'admin', 1);
+('admin', '$2y$10$QYguvqSpl01t7yRhD3U.veSF2rXX.ZvnT7H/Bnkh9upZ1ssqxUWQa', 'System Administrator', 'admin', 1),
+('guard', '$2y$10$QYguvqSpl01t7yRhD3U.veSF2rXX.ZvnT7H/Bnkh9upZ1ssqxUWQa', 'Gate Security Officer', 'guard', 1);
+
