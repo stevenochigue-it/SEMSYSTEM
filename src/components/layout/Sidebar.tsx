@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -18,6 +18,7 @@ interface SidebarProps {
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
   const { user, logout } = useAuth();
   const location = useLocation();
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   if (!user) return null;
 
@@ -124,9 +125,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           <div className="rounded-xl bg-blue-950/30 border border-blue-900/20 p-3 space-y-2.5">
             {[
               { label: 'Barcode Scanner', status: 'Online',    color: 'bg-green-400' },
-              { label: 'Database',        status: 'Connected', color: 'bg-green-400' },
-              { label: 'Camera',          status: 'Active',    color: 'bg-green-400' },
-              { label: 'Internet',        status: 'Online',    color: 'bg-green-400' },
+              { label: 'Database (MySQL)', status: 'Connected', color: 'bg-green-400' },
+              { label: 'LAN Network',      status: 'Connected', color: 'bg-green-400' },
             ].map((device) => (
               <div key={device.label} className="flex items-center justify-between">
                 <span className="text-[11px] text-blue-200/80 font-medium">{device.label}</span>
@@ -142,7 +142,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
         {/* Footer / Logout */}
         <div className="border-t border-blue-950 p-4">
           <button
-            onClick={logout}
+            onClick={() => setShowLogoutConfirm(true)}
             className="flex w-full items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-blue-400 transition-colors hover:bg-red-950/20 hover:text-red-300"
           >
             <LogOut className="h-5 w-5" />
@@ -150,6 +150,33 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           </button>
         </div>
       </aside>
+
+      {/* Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-sm mx-4 text-center border border-slate-200">
+            <div className="flex items-center justify-center w-14 h-14 rounded-full bg-red-100 mx-auto mb-4">
+              <LogOut className="h-7 w-7 text-red-600" />
+            </div>
+            <h2 className="text-lg font-black text-slate-900 mb-1">Confirm Logout</h2>
+            <p className="text-sm text-slate-500 mb-6">Are you sure you want to log out of the system?</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowLogoutConfirm(false)}
+                className="flex-1 rounded-xl border-2 border-slate-200 py-2.5 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { setShowLogoutConfirm(false); logout(); }}
+                className="flex-1 rounded-xl bg-red-600 py-2.5 text-sm font-bold text-white hover:bg-red-700 transition-colors"
+              >
+                Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

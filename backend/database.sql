@@ -189,27 +189,29 @@ VALUES
 (2, 'St. Sealtiel'),
 (2, 'St. Gabriel'),
 
-(3, 'St. Peter'),
-(3, 'St. Paul'),
 (3, 'St. John'),
-(3, 'St. Mark'),
+(3, 'St. Paul'),
+(3, 'St. Anthony'),
+(3, 'St. James'),
 
-(4, 'St. Luke'),
 (4, 'St. Matthew'),
-(4, 'St. Jude'),
+(4, 'St. Luke'),
 (4, 'St. Thomas'),
 
-(5, 'GAS - St. Augustine'),
+(5, 'GAS - Faithful'),
+(5, 'GAS - Loyalty'),
+(5, 'GAS - Patience'),
 
-(6, 'GAS - St. Francis');
+(6, 'GAS - Compassionate'),
+(6, 'GAS - Integrity');
 
 -- STUDENTS (Sample DepEd 12-digit LRNs)
 INSERT INTO students (student_number, first_name, middle_name, last_name, photo, section_id, admin_id)
 VALUES
 ('109283746501', 'Steven',         'G.', 'Ochigue',  'steven.jpg',    1, 1),
-('109283746502', 'Kent Lloyd',     'M.', 'Valmores',  'kent.jpg',      5, 1),
+('109283746502', 'Kent Lloyd',     'M.', 'Valmores',  'kent.jpg',      16, 1),
 ('109283746503', 'Christine Rose', 'A.', 'Pahis',     'christine.jpg', 9, 1),
-('109283746504', 'Darren',         'J.', 'Watkins',   'darren.jpg',    17, 1);
+('109283746504', 'Darren',         'J.', 'Watkins',   'darren.jpg',    19, 1);
 
 -- QR CODES
 INSERT INTO qr_codes (student_id, qr_value)

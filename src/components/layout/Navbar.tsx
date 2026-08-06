@@ -1,6 +1,6 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Menu, LogOut, Clock, Calendar } from 'lucide-react';
+import { Menu, Clock, Calendar } from 'lucide-react';
 import { format } from '../../utils/dateTime';
 
 interface NavbarProps {
@@ -8,7 +8,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -48,16 +48,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onMenuClick }) => {
           <p className="text-[11px] font-medium text-blue-600 uppercase tracking-wider">{user.role}</p>
         </div>
 
-        <div className="h-8 w-[1px] bg-slate-200" />
-
-        {/* Quick Log Out */}
-        <button
-          onClick={logout}
-          title="Logout"
-          className="rounded-lg p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-red-600"
-        >
-          <LogOut className="h-5 w-5" />
-        </button>
       </div>
     </header>
   );
