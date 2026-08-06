@@ -1,0 +1,13 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /SEMSYSTEM-main/
+
+  # Do not rewrite backend API requests
+  RewriteCond %{REQUEST_URI} ^/SEMSYSTEM-main/backend/ [NC]
+  RewriteRule ^ - [L]
+
+  # Redirect all other non-file/directory requests to index.html for SPA routing
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^ index.html [L]
+</IfModule>
