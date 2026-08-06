@@ -132,7 +132,7 @@ DEFAULT CHARSET=utf8mb4
 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
--- USERS (Accounts / Parents / Guards)
+-- USERS (System Accounts: Admin & Guard only)
 -- =====================================================
 
 CREATE TABLE users (
@@ -142,17 +142,11 @@ CREATE TABLE users (
     first_name VARCHAR(50) NOT NULL,
     middle_name VARCHAR(50) DEFAULT NULL,
     last_name VARCHAR(50) NOT NULL,
-    role ENUM('admin', 'guard', 'parent') NOT NULL DEFAULT 'admin',
+    role ENUM('admin', 'guard') NOT NULL DEFAULT 'admin',
     active TINYINT(1) NOT NULL DEFAULT 1,
     google_id VARCHAR(100) DEFAULT NULL,
     google_email VARCHAR(100) DEFAULT NULL,
-    linked_student_number VARCHAR(30) DEFAULT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_users_student
-        FOREIGN KEY (linked_student_number)
-        REFERENCES students(student_number)
-        ON DELETE SET NULL
-        ON UPDATE CASCADE
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
