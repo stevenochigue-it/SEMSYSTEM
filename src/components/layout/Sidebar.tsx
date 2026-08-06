@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -115,6 +115,29 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             );
           })}
         </nav>
+
+        {/* Device Status */}
+        <div className="mx-4 mb-4">
+          <p className="text-[9px] font-bold uppercase tracking-widest text-blue-500/60 mb-3 px-1">
+            Device Status
+          </p>
+          <div className="rounded-xl bg-blue-950/30 border border-blue-900/20 p-3 space-y-2.5">
+            {[
+              { label: 'Barcode Scanner', status: 'Online',    color: 'bg-green-400' },
+              { label: 'Database',        status: 'Connected', color: 'bg-green-400' },
+              { label: 'Camera',          status: 'Active',    color: 'bg-green-400' },
+              { label: 'Internet',        status: 'Online',    color: 'bg-green-400' },
+            ].map((device) => (
+              <div key={device.label} className="flex items-center justify-between">
+                <span className="text-[11px] text-blue-200/80 font-medium">{device.label}</span>
+                <span className="flex items-center gap-1.5 text-[10px] font-bold text-green-400">
+                  <span className={`h-2 w-2 rounded-full ${device.color} animate-pulse`} />
+                  {device.status}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Footer / Logout */}
         <div className="border-t border-blue-950 p-4">
