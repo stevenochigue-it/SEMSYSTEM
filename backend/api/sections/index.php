@@ -13,13 +13,13 @@ $db = $database->getConnection();
 
 try {
     $query = "SELECT
-                sec.section_id,
+                sec.id AS section_id,
                 sec.section_name,
-                gl.grade_level_id,
+                gl.id AS grade_level_id,
                 gl.grade_name
               FROM sections sec
-              JOIN grade_levels gl ON sec.grade_level_id = gl.grade_level_id
-              ORDER BY gl.grade_level_id ASC, sec.section_name ASC";
+              JOIN grade_levels gl ON sec.grade_level_id = gl.id
+              ORDER BY gl.id ASC, sec.section_name ASC";
 
     $stmt = $db->prepare($query);
     $stmt->execute();

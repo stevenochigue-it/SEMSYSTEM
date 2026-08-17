@@ -30,6 +30,7 @@ export const GateMonitorPage: React.FC = () => {
 
   const [scanValue, setScanValue] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // Live display slots — cards disappear after 3 seconds
   const [activityLogs, setActivityLogs] = useState<ActivityItem[]>([]);
@@ -182,7 +183,8 @@ export const GateMonitorPage: React.FC = () => {
               </span>
             </div>
             <button
-              onClick={logout}
+              type="button"
+              onClick={() => setShowLogoutConfirm(true)}
               className="flex items-center gap-2 text-xs font-bold bg-red-600/90 hover:bg-red-600 text-white px-4 py-2 rounded-xl transition-all"
             >
               <LogOut className="h-4 w-4" />
@@ -200,7 +202,7 @@ export const GateMonitorPage: React.FC = () => {
                 type="text"
                 value={scanValue}
                 onChange={(e) => setScanValue(e.target.value)}
-                placeholder="Scan barcode or type LRN and press Enter..."
+                placeholder="Scan QR Code or type Student ID and press Enter..."
                 className="w-full rounded-xl border-2 border-slate-200 pl-11 pr-4 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 bg-white transition-all"
               />
             </div>
@@ -318,13 +320,21 @@ export const GateMonitorPage: React.FC = () => {
                       )}
                     </div>
 
-                    {/* Name */}
-                    <div>
+                    {/* Name, Grade & Section, Time In/Out */}
+                    <div className="space-y-0.5">
                       <p className="text-sm font-black text-slate-900 leading-tight line-clamp-1">
                         {fullName}
                       </p>
-                      <p className="text-[11px] text-slate-500 font-medium mt-0.5">
-                        {isEntry ? 'Entered' : 'Exited'} {item.scannedAtTime}
+                      {student?.grade_name && (
+                        <p className="text-[10px] text-blue-600 font-extrabold uppercase">
+                          {student.grade_name} — {student.section_name}
+                        </p>
+                      )}
+                      <p className="text-[11px] text-slate-600 font-semibold mt-0.5">
+                        <span className={`inline-block font-extrabold px-1.5 py-0.5 rounded text-[10px] mr-1 ${isEntry ? 'bg-emerald-100 text-emerald-800' : 'bg-orange-100 text-orange-800'}`}>
+                          {isEntry ? 'TIME IN' : 'TIME OUT'}
+                        </span>
+                        {item.scannedAtTime}
                       </p>
                     </div>
                   </div>
@@ -335,6 +345,35 @@ export const GateMonitorPage: React.FC = () => {
 
         </div>
       </div>
+
+      {/* Guard Logout Confirmation Modal */}
+      {showLogoutConfirm && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-sm text-center border border-slate-200 animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mx-auto mb-4 border border-red-200">
+              <LogOut className="h-8 w-8 text-red-600" />
+            </div>
+            <h2 className="text-xl font-black text-slate-900 mb-1">Confirm Logout</h2>
+            <p className="text-sm text-slate-500 font-medium mb-6">Are you sure you want to log out of the Gate Terminal?</p>
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowLogoutConfirm(false)}
+                className="flex-1 rounded-xl border-2 border-slate-200 py-3 text-sm font-bold text-slate-600 hover:bg-slate-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => { setShowLogoutConfirm(false); logout(); }}
+                className="flex-1 rounded-xl bg-red-600 py-3 text-sm font-bold text-white hover:bg-red-700 shadow-md shadow-red-600/20 transition-all"
+              >
+                Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

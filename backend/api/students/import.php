@@ -28,28 +28,28 @@ if (empty($students)) {
 $imported = 0;
 $skipped  = 0;
 $errors   = [];
-$admin_id = 1; // single-admin system
+$user_id  = 1; // system user ID
 
-$checkNum = $db->prepare("SELECT student_id FROM students WHERE student_number = :sn");
-$checkSec = $db->prepare("SELECT section_id FROM sections WHERE section_id = :sid");
+$checkNum = $db->prepare("SELECT id FROM students WHERE student_id_number = :sn");
+$checkSec = $db->prepare("SELECT id FROM sections WHERE id = :sid");
 
 $insStudent = $db->prepare("INSERT INTO students
-    (student_number, first_name, middle_name, last_name, section_id, admin_id)
-    VALUES (:sn, :fn, :mn, :ln, :sid, :aid)");
+    (student_id_number, first_name, middle_name, last_name, section_id, created_by_user_id)
+    VALUES (:sn, :fn, :mn, :ln, :sid, :uid)");
 
 $insQR = $db->prepare("INSERT INTO qr_codes (student_id, qr_value) VALUES (:sid, :qv)");
 
 foreach ($students as $idx => $row) {
     $rowNum = $idx + 2;
 
-    $sn  = trim((string)($row['student_number'] ?? ''));
+    $sn  = trim((string)($row['student_number'] ?? $row['student_id_number'] ?? ''));
     $fn  = trim((string)($row['first_name']     ?? ''));
     $mn  = trim((string)($row['middle_name']    ?? ''));
     $ln  = trim((string)($row['last_name']      ?? ''));
     $sid = (int)($row['section_id']             ?? 0);
 
     if (!$sn || !$fn || !$ln || !$sid) {
-        $errors[] = "Row {$rowNum}: Missing required fields (student_number, first_name, last_name, section_id).";
+        $errors[] = "Row {$rowNum}: Missing required fields (student_id_number, first_name, last_name, section_id).";
         $skipped++;
         continue;
     }
@@ -58,7 +58,7 @@ foreach ($students as $idx => $row) {
     $checkNum->bindParam(':sn', $sn);
     $checkNum->execute();
     if ($checkNum->fetch()) {
-        $errors[] = "Row {$rowNum}: Student number '{$sn}' already exists — skipped.";
+        $errors[] = "Row {$rowNum}: Student ID '{$sn}' already exists — skipped.";
         $skipped++;
         continue;
     }
@@ -81,11 +81,11 @@ foreach ($students as $idx => $row) {
         $insStudent->bindParam(':mn',  $mnNull);
         $insStudent->bindParam(':ln',  $ln);
         $insStudent->bindParam(':sid', $sid);
-        $insStudent->bindParam(':aid', $admin_id);
+        $insStudent->bindParam(':uid', $user_id);
         $insStudent->execute();
 
         $newId   = $db->lastInsertId();
-        $qrValue = 'STU-' . $sn;
+        $qrValue = strpos($sn, 'STU-') === 0 ? $sn : 'STU-' . $sn;
         $insQR->bindParam(':sid', $newId);
         $insQR->bindParam(':qv',  $qrValue);
         $insQR->execute();

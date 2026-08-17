@@ -111,7 +111,7 @@ export const LoginPage: React.FC = () => {
                 San Isidro National High School
               </h1>
               <p className="text-blue-300 font-black text-sm sm:text-base md:text-lg uppercase tracking-widest mt-1">
-                Student Gate Entrance Monitoring System
+                School Entrance Monitoring System
               </p>
               <p className="text-white/60 font-semibold text-xs sm:text-sm mt-1">
                 Balingasag, Mis. Or.

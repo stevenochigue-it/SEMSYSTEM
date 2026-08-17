@@ -1,21 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useData } from '../context/DataContext';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
 import {
   Users,
   LogIn,
   LogOut,
-  AlertTriangle,
   Search,
   Clock,
   RefreshCw,
-  TrendingUp,
-  Monitor,
   Wifi,
   Database,
   ScanLine,
-  CheckCircle2,
   Calendar,
   ChevronRight,
   Info,
@@ -24,7 +18,6 @@ import {
   ChevronLeft,
   ChevronsLeft,
   ChevronsRight,
-  SlidersHorizontal,
   ArrowUpRight,
   ArrowDownRight,
   Activity
@@ -33,7 +26,7 @@ import { ResponsiveContainer, BarChart, Bar, AreaChart, Area, XAxis, YAxis, Tool
 import { format } from '../utils/dateTime';
 
 export const DashboardPage: React.FC = () => {
-  const { stats, chartData, attendance, refreshData, resetStats } = useData();
+  const { stats, chartData, attendance, refreshData } = useData();
   const [searchTerm, setSearchTerm] = useState('');
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeTab, setActiveTab] = useState<'all' | 'inside' | 'outside'>('all');
@@ -61,11 +54,12 @@ export const DashboardPage: React.FC = () => {
     // Search filter
     if (!searchTerm) return true;
     const search = searchTerm.toLowerCase();
+    const displayId = (r.student_id_number || r.student_number || r.student_id || '').toLowerCase();
     return (
       r.student_name?.toLowerCase().includes(search) ||
-      r.student_number.toLowerCase().includes(search) ||
+      displayId.includes(search) ||
       (r.section_name && r.section_name.toLowerCase().includes(search)) ||
-      (r.course && r.course.toLowerCase().includes(search))
+      (r.grade_name && r.grade_name.toLowerCase().includes(search))
     );
   }).reverse();
 
@@ -132,13 +126,13 @@ export const DashboardPage: React.FC = () => {
           <div className="space-y-1.5">
             <div className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-bold text-indigo-100 backdrop-blur-sm">
               <Sparkles className="h-3.5 w-3.5" />
-              <span>Live Gate Monitoring System</span>
+              <span>School Entrance Monitoring System</span>
             </div>
             <h2 className="text-xl font-bold tracking-tight text-white sm:text-2xl">
               San Isidro National High School Access Terminal
             </h2>
             <p className="text-xs text-indigo-100/90 max-w-xl font-medium">
-              Real-time automated entrance monitoring, RFID/QR barcode validation, and daily campus traffic diagnostics.
+              Real-time automated entrance monitoring, QR Code validation, and daily campus traffic diagnostics.
             </p>
           </div>
 
@@ -329,7 +323,7 @@ export const DashboardPage: React.FC = () => {
           <div className="pt-4 border-t border-slate-100 space-y-2.5">
             <div className="flex items-center justify-between text-xs">
               <span className="font-semibold text-slate-600 flex items-center gap-2">
-                <ScanLine className="h-3.5 w-3.5 text-indigo-500" /> RFID Barcode Scanner
+                <ScanLine className="h-3.5 w-3.5 text-indigo-500" /> QR Code Scanner
               </span>
               <span className="font-bold text-emerald-600 flex items-center gap-1">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" /> Online
@@ -375,8 +369,8 @@ export const DashboardPage: React.FC = () => {
             <button
               onClick={() => {
                 const csvContent = "data:text/csv;charset=utf-8," 
-                  + ["LRN,Name,Grade,Time,Status"].join(",") + "\n"
-                  + filteredAttendance.map(r => `${r.student_number},"${r.student_name}",${r.section_name || r.course},${r.time_out || r.time_in},${r.time_out ? 'Exit' : 'Entry'}`).join("\n");
+                  + ["Student ID,Name,Grade & Section,Time,Status"].join(",") + "\n"
+                  + filteredAttendance.map(r => `${r.student_id_number || r.student_number || r.student_id},"${r.student_name}",${r.grade_name || ''} - ${r.section_name || ''},${r.time_out || r.time_in},${r.time_out ? 'Exit' : 'Entry'}`).join("\n");
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
@@ -425,7 +419,7 @@ export const DashboardPage: React.FC = () => {
             <thead className="bg-[#f8fafc] text-slate-500 font-bold uppercase tracking-wider border-b border-slate-100">
               <tr>
                 <th className="py-3.5 px-5">Student Name</th>
-                <th className="py-3.5 px-5">LRN / Student No.</th>
+                <th className="py-3.5 px-5">Student ID</th>
                 <th className="py-3.5 px-5">Grade & Section</th>
                 <th className="py-3.5 px-5">Scan Time</th>
                 <th className="py-3.5 px-5 text-right">Status Badge</th>
@@ -435,16 +429,17 @@ export const DashboardPage: React.FC = () => {
               {paginatedAttendance.length > 0 ? (
                 paginatedAttendance.map((record) => {
                   const isEntry = !record.time_out;
+                  const displayId = record.student_id_number || record.student_number || record.student_id;
                   return (
-                    <tr key={record.id} className="hover:bg-slate-50/80 transition-colors">
+                    <tr key={record.id || record.log_id || String(Math.random())} className="hover:bg-slate-50/80 transition-colors">
                       <td className="py-3.5 px-5 font-bold text-slate-900">
                         {record.student_name}
                       </td>
                       <td className="py-3.5 px-5 font-mono text-slate-500 font-semibold">
-                        {record.student_number}
+                        {displayId}
                       </td>
                       <td className="py-3.5 px-5 text-slate-600 font-medium">
-                        {record.section_name || record.course || '—'}
+                        {record.grade_name ? `${record.grade_name} — ${record.section_name}` : record.section_name || '—'}
                       </td>
                       <td className="py-3.5 px-5 font-semibold text-slate-500 flex items-center gap-1.5">
                         <Clock className="h-3.5 w-3.5 text-slate-400" />

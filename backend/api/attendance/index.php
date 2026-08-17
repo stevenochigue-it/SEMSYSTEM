@@ -13,22 +13,25 @@ $db = $database->getConnection();
 
 try {
     $query = "SELECT
-                gl.log_id,
+                gl.id AS log_id,
+                gl.id AS id,
                 gl.qr_id,
                 gl.scan_time,
                 gl.status,
-                s.student_id,
-                s.student_number,
+                s.id AS student_id,
+                s.student_id_number AS student_number,
+                s.student_id_number,
                 s.first_name,
                 s.middle_name,
                 s.last_name,
+                s.photo,
                 sec.section_name,
                 grl.grade_name
               FROM gate_logs gl
-              JOIN qr_codes q ON gl.qr_id = q.qr_id
-              JOIN students s ON q.student_id = s.student_id
-              JOIN sections sec ON s.section_id = sec.section_id
-              JOIN grade_levels grl ON sec.grade_level_id = grl.grade_level_id
+              JOIN qr_codes q ON gl.qr_id = q.id
+              JOIN students s ON q.student_id = s.id
+              JOIN sections sec ON s.section_id = sec.id
+              JOIN grade_levels grl ON sec.grade_level_id = grl.id
               ORDER BY gl.scan_time DESC
               LIMIT 500";
 

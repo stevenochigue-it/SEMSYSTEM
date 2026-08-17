@@ -1,12 +1,14 @@
-// â”€â”€â”€ Core Entities â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Core Entities -------------------------------------------------------------
 
 export interface GradeLevel {
-  grade_level_id: number;
+  grade_level_id?: number;
+  id?: number;
   grade_name: string;
 }
 
 export interface Section {
-  section_id: number;
+  section_id?: number;
+  id?: number;
   section_name: string;
   grade_level_id: number;
   grade_name: string;
@@ -15,7 +17,8 @@ export interface Section {
 export interface Student {
   id?: string;
   student_id?: string;
-  student_number: string;
+  student_number?: string;
+  student_id_number?: string;
   first_name: string;
   middle_name?: string;
   last_name: string;
@@ -25,10 +28,6 @@ export interface Student {
   section?: string;
   grade_level_id?: number;
   grade_name?: string;
-  course?: string;
-  year_level?: string;
-  guardian_name?: string;
-  contact_number?: string;
   qr_id?: string;
   qr_value?: string;
   created_at?: string;
@@ -46,14 +45,13 @@ export interface GateLog {
   time_out?: string;
   status?: 'ENTRY' | 'EXIT' | 'inside' | 'outside' | string;
   student_id?: string;
-  student_number: string;
+  student_number?: string;
+  student_id_number?: string;
   student_name?: string;
   first_name?: string;
   middle_name?: string;
   last_name?: string;
   photo?: string;
-  course?: string;
-  year_level?: string;
   section_name?: string;
   grade_name?: string;
 }
@@ -66,17 +64,12 @@ export interface SystemAdmin {
   last_name?: string;
   full_name: string;
   role: 'admin' | 'guard' | string;
-  position?: string;
-  email?: string;
   password_hash?: string;
   active?: boolean;
   created_at?: string;
-  google_id?: string;
-  google_email?: string;
-
 }
 
-// ─── Scan Result ─────────────────────────────────────────────────────────────
+// --- Scan Result -------------------------------------------------------------
 
 export interface ScanResult {
   success: boolean;
@@ -87,7 +80,7 @@ export interface ScanResult {
   status?: 'ENTRY' | 'EXIT' | 'inside' | 'outside' | string;
 }
 
-// ─── Dashboard ───────────────────────────────────────────────────────────────
+// --- Dashboard ---------------------------------------------------------------
 
 export interface DashboardStats {
   totalStudents: number;
@@ -105,7 +98,7 @@ export interface ChartDataPoint {
   exits: number;
 }
 
-// ─── Auth ────────────────────────────────────────────────────────────────────
+// --- Auth --------------------------------------------------------------------
 
 export interface AuthUser {
   id: string;
@@ -115,8 +108,6 @@ export interface AuthUser {
   last_name?: string;
   full_name: string;
   role: 'admin' | 'guard' | string;
-  position?: string;
-  email?: string;
 }
 
 export interface LoginCredentials {
@@ -124,9 +115,9 @@ export interface LoginCredentials {
   password?: string;
 }
 
-// â”€â”€â”€ Report â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Report ------------------------------------------------------------------
 
-export type ReportType = 'daily' | 'weekly' | 'monthly';
+export type ReportType = 'daily' | 'weekly' | 'monthly' | 'yearly';
 
 export interface ReportData {
   type: ReportType;
@@ -139,7 +130,7 @@ export interface ReportData {
   };
 }
 
-// â”€â”€â”€ Filters â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Filters -----------------------------------------------------------------
 
 export interface AttendanceFilters {
   search: string;
@@ -149,8 +140,6 @@ export interface AttendanceFilters {
   status: string;
 }
 
-// â”€â”€â”€ Legacy aliases â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// --- Legacy aliases ----------------------------------------------------------
 export type AttendanceRecord = GateLog;
 export type User = SystemAdmin;
-
-

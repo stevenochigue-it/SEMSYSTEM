@@ -1,4 +1,4 @@
-﻿import React, { useRef } from 'react';
+import React, { useRef } from 'react';
 import type { Student } from '../../types';
 import { QRCodeSVG } from 'qrcode.react';
 import { UserCheck, ShieldCheck, Printer } from 'lucide-react';
@@ -16,9 +16,12 @@ export const QRCard: React.FC<QRCardProps> = ({ student }) => {
     contentRef: cardRef,
   });
 
+  const displayId = student.student_id_number || student.student_number || student.student_id || '';
+  const qrVal = student.qr_value || (displayId.startsWith('STU-') ? displayId : `STU-${displayId}`);
+
   return (
     <div className="flex flex-col items-center gap-5">
-      
+
       {/* Printable ID Card Container */}
       <div className="border border-slate-200 bg-slate-55 p-3 rounded-2xl shadow-sm">
         <div
@@ -45,7 +48,7 @@ export const QRCard: React.FC<QRCardProps> = ({ student }) => {
 
           {/* Student Info Details */}
           <div className="flex-1 flex flex-col items-center justify-center my-4 gap-4">
-            
+
             {/* Student Photo */}
             <div className="relative">
               {student.photo ? (
@@ -72,17 +75,17 @@ export const QRCard: React.FC<QRCardProps> = ({ student }) => {
                 {student.first_name} {student.last_name}
               </h3>
               <p className="text-xs font-bold text-blue-600 mt-0.5">
-                ID: {student.student_number}
+                ID: {displayId}
               </p>
               <p className="text-[10px] text-slate-500 font-semibold uppercase mt-1">
-                {student.grade_name} â€” {student.section_name}
+                {student.grade_name} — {student.section_name}
               </p>
             </div>
 
             {/* QR Code Container */}
             <div className="bg-slate-50 p-3 rounded-xl border border-slate-200 shadow-inner flex items-center justify-center">
               <QRCodeSVG
-                value={student.qr_value ?? `STU-${student.student_number}`}
+                value={qrVal}
                 size={110}
                 bgColor="#F8FAFC"
                 fgColor="#0F2418"
@@ -117,5 +120,3 @@ export const QRCard: React.FC<QRCardProps> = ({ student }) => {
     </div>
   );
 };
-
-

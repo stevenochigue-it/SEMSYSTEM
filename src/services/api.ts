@@ -25,10 +25,9 @@ async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
 }
 
 export const apiService = {
-  // â”€â”€â”€ No-op init (kept for DataContext compatibility) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   init() {},
 
-  // â”€â”€â”€ Auth â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // --- Auth ------------------------------------------------------------------
   async login(credentials: LoginCredentials): Promise<{ token: string; user: any }> {
     return fetchJson<{ token: string; user: any }>('/auth/login.php', {
       method: 'POST',
@@ -36,12 +35,12 @@ export const apiService = {
     });
   },
 
-  // ————————————————————————————————————————————————————————————————————————————————————————
+  // --- Sections --------------------------------------------------------------
   async getSections(): Promise<Section[]> {
     return fetchJson<Section[]>('/sections/index.php');
   },
 
-  // â”€â”€â”€ Students â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // --- Students --------------------------------------------------------------
   async getStudents(): Promise<Student[]> {
     return fetchJson<Student[]>('/students/index.php');
   },
@@ -64,7 +63,7 @@ export const apiService = {
     await fetchJson<void>(`/students/index.php?id=${id}`, { method: 'DELETE' });
   },
 
-  // â”€â”€â”€ Bulk Import â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // --- Bulk Import -----------------------------------------------------------
   async importStudents(students: any[]): Promise<{ success: boolean; imported: number; skipped: number; errors: string[]; message: string }> {
     return fetchJson('/students/import.php', {
       method: 'POST',
@@ -72,7 +71,7 @@ export const apiService = {
     });
   },
 
-  // â”€â”€â”€ QR Scan â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // --- QR Scan ---------------------------------------------------------------
   async scanQRCode(qrValue: string): Promise<ScanResult> {
     return fetchJson<ScanResult>('/attendance/scan.php', {
       method: 'POST',
@@ -80,12 +79,12 @@ export const apiService = {
     });
   },
 
-  // â”€â”€â”€ Gate Logs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // --- Gate Logs -------------------------------------------------------------
   async getAttendance(): Promise<GateLog[]> {
     return fetchJson<GateLog[]>('/attendance/index.php');
   },
 
-  // â”€â”€â”€ Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // --- Dashboard -------------------------------------------------------------
   async getDashboardStats(): Promise<DashboardStats> {
     return fetchJson<DashboardStats>('/dashboard/stats.php');
   },
@@ -95,24 +94,29 @@ export const apiService = {
   },
 
   async resetInvalidScans(): Promise<void> {
-    // No-op in new schema â€” gate_logs doesn't track invalid scans separately
+    // No-op
   },
 
-  // â”€â”€â”€ System Admins (replaces Users) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // --- User Accounts (Unified Admin & Guard) ---------------------------------
   async getUsers(): Promise<SystemAdmin[]> {
-    // Returns empty â€” admin management handled separately
-    return [];
+    return fetchJson<SystemAdmin[]>('/users/index.php');
   },
 
-  async addUser(_user: any): Promise<SystemAdmin> {
-    throw new Error('Use admin management endpoint instead.');
+  async addUser(user: any): Promise<SystemAdmin> {
+    return fetchJson<SystemAdmin>('/users/index.php', {
+      method: 'POST',
+      body: JSON.stringify(user),
+    });
   },
 
-  async updateUser(_id: string, _user: any): Promise<SystemAdmin> {
-    throw new Error('Use admin management endpoint instead.');
+  async updateUser(id: string, user: any): Promise<SystemAdmin> {
+    return fetchJson<SystemAdmin>(`/users/index.php?id=${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(user),
+    });
   },
 
-  async deleteUser(_id: string): Promise<void> {
-    throw new Error('Use admin management endpoint instead.');
+  async deleteUser(id: string): Promise<void> {
+    await fetchJson<void>(`/users/index.php?id=${id}`, { method: 'DELETE' });
   },
 };

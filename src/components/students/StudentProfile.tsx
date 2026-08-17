@@ -11,12 +11,12 @@ interface StudentProfileProps {
 }
 
 export const StudentProfile: React.FC<StudentProfileProps> = ({ student, attendanceHistory }) => {
-  // Get most recent gate logs for this student's QR
+  const displayId = student.student_id_number || student.student_number || student.student_id || '';
   const recentLogs = attendanceHistory
-    .filter(r => r.qr_id === student.qr_id || r.student_number === student.student_number)
+    .filter(r => r.qr_id === student.qr_id || (displayId && (r.student_number === displayId || r.student_id_number === displayId)))
     .slice(0, 5);
 
-  const qrValue = student.qr_value ?? `STU-${student.student_number}`;
+  const qrValue = student.qr_value ?? (displayId.startsWith('STU-') ? displayId : `STU-${displayId}`);
 
   return (
     <div className="space-y-6">
@@ -43,7 +43,7 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ student, attenda
               {student.last_status === 'ENTRY' ? 'Currently Inside' : 'Outside School'}
             </Badge>
           </div>
-          <p className="text-sm font-bold text-blue-600 font-mono">LRN: {student.student_number}</p>
+          <p className="text-sm font-bold text-blue-600 font-mono">Student ID: {displayId}</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1.5 text-xs text-slate-550 font-medium">
             <div className="flex items-center gap-2">
               <GraduationCap className="h-4 w-4 text-slate-400" />
@@ -82,7 +82,7 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ student, attenda
                 const dateStr = log.scan_time ? new Date(log.scan_time).toLocaleDateString('en-PH', { month: 'short', day: 'numeric' }) : '—';
                 const timeStr = log.scan_time ? new Date(log.scan_time).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }) : '—';
                 return (
-                  <Card key={log.log_id} className="p-3.5 border-slate-100 hover:border-slate-200 bg-white">
+                  <Card key={log.log_id || log.id} className="p-3.5 border-slate-100 hover:border-slate-200 bg-white">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         {isEntry
@@ -118,5 +118,3 @@ export const StudentProfile: React.FC<StudentProfileProps> = ({ student, attenda
     </div>
   );
 };
-
-

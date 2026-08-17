@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Level 1 Conceptual ERD & Discussion - SEMSYSTEM</title>
+    <!-- Mermaid CDN for Rendering ERD Diagram -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({startOnLoad:true, theme: 'neutral'});</script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #0f172a;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .paper-container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 40px 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border-radius: 6px;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 3px double #1e3a8a;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            color: #1e3a8a;
+            font-size: 22px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 0 0 5px 0;
+        }
+
+        .header p {
+            font-size: 13.5px;
+            color: #475569;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .section-title {
+            color: #1e3a8a;
+            font-size: 15px;
+            border-left: 5px solid #1e3a8a;
+            padding-left: 10px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .diagram-box {
+            background-color: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .entity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .entity-card {
+            border: 1px solid #94a3b8;
+            border-radius: 6px;
+            background-color: #ffffff;
+            overflow: hidden;
+        }
+
+        .entity-card.associative {
+            border: 2px solid #0284c7;
+            background-color: #f0f9ff;
+        }
+
+        .entity-header {
+            background-color: #1e3a8a;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 13px;
+            padding: 8px 12px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .entity-card.associative .entity-header {
+            background-color: #0284c7;
+        }
+
+        .entity-body {
+            padding: 12px;
+            font-size: 12.5px;
+        }
+
+        .entity-body ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+
+        .entity-body li {
+            margin-bottom: 4px;
+        }
+
+        .discussion-box {
+            background-color: #fafafa;
+            border-left: 4px solid #0284c7;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            border-radius: 0 4px 4px 0;
+            font-size: 13px;
+        }
+
+        .discussion-box strong {
+            color: #0369a1;
+        }
+
+        .btn-bar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-print {
+            background-color: #1e3a8a;
+            color: #ffffff;
+            border: none;
+            padding: 11px 22px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+
+        .note-box {
+            background-color: #fefce8;
+            border: 1px solid #fef08a;
+            color: #854d0e;
+            padding: 10px 14px;
+            border-radius: 5px;
+            font-size: 12.5px;
+            margin-bottom: 20px;
+        }
+
+        @media print {
+            body { background: #fff; padding: 0; }
+            .paper-container { box-shadow: none; padding: 0; max-width: 100%; }
+            .btn-bar { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="btn-bar">
+        <button class="btn-print" onclick="window.print()">🖨️ Print Conceptual ERD & Discussion (Ctrl + P)</button>
+    </div>
+
+    <div class="paper-container">
+
+        <div class="header">
+            <h1>Level 1 Conceptual Data Model (ERD)</h1>
+            <p>San Isidro National High School – Student Entrance Monitoring System (SEMSYSTEM)</p>
+        </div>
+
+        <div class="note-box">
+            <strong>Academic Note on Conceptual ERD Compliance:</strong> Primary Key (PK) labels, Foreign Key (FK) labels, and technical SQL data types are omitted. The model highlights business entities, conceptual attributes, operational relationships, and the <strong>Associative Entity (GATE_LOG)</strong>.
+        </div>
+
+        <h2 class="section-title">1. Conceptual ERD Diagram</h2>
+        <div class="diagram-box">
+            <div class="mermaid">
+                erDiagram
+                    GRADE_LEVEL ||--|{ SECTION : "contains"
+                    SECTION ||--|{ STUDENT : "enrolls"
+                    USER_ACCOUNT ||--|{ STUDENT : "registers"
+                    STUDENT ||--|| QR_CODE : "is assigned"
+                    QR_CODE ||--|{ GATE_LOG : "associates passage events for"
+
+                    GRADE_LEVEL {
+                        Attribute Grade_Level_Name
+                    }
+                    SECTION {
+                        Attribute Section_Name
+                    }
+                    USER_ACCOUNT {
+                        Attribute Username
+                        Attribute Password
+                        Attribute First_Name
+                        Attribute Middle_Name
+                        Attribute Last_Name
+                        Attribute User_Role
+                        Attribute Account_Activation_Status
+                        Attribute Creation_Timestamp
+                    }
+                    STUDENT {
+                        Attribute Student_ID_Number
+                        Attribute First_Name
+                        Attribute Middle_Name
+                        Attribute Last_Name
+                        Attribute Profile_Photo
+                        Attribute Creation_Timestamp
+                    }
+                    QR_CODE {
+                        Attribute QR_Value
+                        Attribute Creation_Timestamp
+                    }
+                    GATE_LOG {
+                        Attribute Scan_Date_And_Time
+                        Attribute Gate_Passage_Status
+                    }
+            </div>
+        </div>
+
+        <h2 class="section-title">2. Conceptual Entity & Attribute Inventory</h2>
+        <div class="entity-grid">
+
+            <div class="entity-card">
+                <div class="entity-header">USER_ACCOUNT</div>
+                <div class="entity-body">
+                    <ul>
+                        <li>Username</li>
+                        <li>Password</li>
+                        <li>First Name</li>
+                        <li>Middle Name</li>
+                        <li>Last Name</li>
+                        <li>User Role</li>
+                        <li>Account Activation Status</li>
+                        <li>Creation Timestamp</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="entity-card">
+                <div class="entity-header">GRADE_LEVEL</div>
+                <div class="entity-body">
+                    <ul>
+                        <li>Grade Level Name</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="entity-card">
+                <div class="entity-header">SECTION</div>
+                <div class="entity-body">
+                    <ul>
+                        <li>Section Name</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="entity-card">
+                <div class="entity-header">STUDENT</div>
+                <div class="entity-body">
+                    <ul>
+                        <li>Student ID Number</li>
+                        <li>First Name</li>
+                        <li>Middle Name</li>
+                        <li>Last Name</li>
+                        <li>Profile Photo</li>
+                        <li>Creation Timestamp</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="entity-card">
+                <div class="entity-header">QR_CODE</div>
+                <div class="entity-body">
+                    <ul>
+                        <li>QR Value</li>
+                        <li>Creation Timestamp</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="entity-card associative">
+                <div class="entity-header">GATE_LOG (Associative Entity)</div>
+                <div class="entity-body">
+                    <ul>
+                        <li>Scan Date & Time</li>
+                        <li>Gate Passage Status (Entry/Exit)</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+
+        <h2 class="section-title">3. Relationship Discussion & Associative Entity Rules</h2>
+
+        <div class="discussion-box">
+            <strong>1. GRADE_LEVEL contains SECTION (1-to-Many):</strong> One Grade Level contains multiple class sections. Each section belongs to exactly one Grade Level.
+        </div>
+
+        <div class="discussion-box">
+            <strong>2. SECTION enrolls STUDENT (1-to-Many):</strong> One Section enrolls multiple students. Each student belongs to one designated class section.
+        </div>
+
+        <div class="discussion-box">
+            <strong>3. USER_ACCOUNT registers STUDENT (1-to-Many):</strong> One System User Account (School ICT Coordinator) registers and manages multiple student records in the database.
+        </div>
+
+        <div class="discussion-box">
+            <strong>4. STUDENT is assigned QR_CODE (1-to-1):</strong> Each enrolled student is assigned exactly one unique QR Code credential.
+        </div>
+
+        <div class="discussion-box">
+            <strong>5. GATE_LOG as an Associative Entity (1-to-Many):</strong> <code>GATE_LOG</code> functions as an <strong>Associative Entity</strong> that links a student's assigned <code>QR_CODE</code> with their real-time gate passage events, recording the <code>Scan Date & Time</code> and <code>Gate Passage Status (ENTRY / EXIT)</code> for every scan.
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -20,7 +20,7 @@ import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
-type ReportTab = 'daily' | 'weekly' | 'monthly' | 'student';
+type ReportTab = 'daily' | 'weekly' | 'monthly' | 'yearly' | 'student';
 
 export const ReportsPage: React.FC = () => {
   const { attendance, students } = useData();
@@ -50,8 +50,11 @@ export const ReportsPage: React.FC = () => {
       case 'monthly':
         const pastMonth = getPastDateStr(30);
         return attendance.filter(r => (r.date ?? '') >= pastMonth);
+      case 'yearly':
+        const pastYear = getPastDateStr(365);
+        return attendance.filter(r => (r.date ?? '') >= pastYear);
       case 'student':
-        return attendance.filter(r => r.student_number === selectedStudentNumber);
+        return attendance.filter(r => (r.student_id_number || r.student_number || r.student_id) === selectedStudentNumber);
       default:
         return [];
     }
@@ -96,10 +99,10 @@ export const ReportsPage: React.FC = () => {
   // Export to Excel function
   const exportExcel = () => {
     const data = currentRecords.map(r => ({
-      'Student No.': r.student_number,
+      'Student ID': r.student_id_number || r.student_number || r.student_id,
       'Student Name': r.student_name || '',
-      'Course': r.course || '',
-      'Year Level': r.year_level || '',
+      'Grade Level': r.grade_name || '',
+      'Section': r.section_name || '',
       'Date': r.date,
       'Time In': r.time_in || 'N/A',
       'Time Out': r.time_out || 'N/A',
@@ -120,11 +123,11 @@ export const ReportsPage: React.FC = () => {
     doc.text(`Period / Selected: ${activeTab === 'student' && selectedStudentObj ? selectedStudentObj.first_name + ' ' + selectedStudentObj.last_name : activeTab.toUpperCase()}`, 14, 21);
     doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 27);
 
-    const headers = [['Student ID', 'Student Name', 'Course & Year', 'Date', 'Time In', 'Time Out', 'Status']];
+    const headers = [['Student ID', 'Student Name', 'Grade & Section', 'Date', 'Time In', 'Time Out', 'Status']];
     const rows = currentRecords.map(r => [
-      r.student_number,
+      r.student_id_number || r.student_number || r.student_id,
       r.student_name || '',
-      `${r.course} - ${r.year_level}`,
+      `${r.grade_name || ''} — ${r.section_name || ''}`,
       r.date,
       r.time_in || 'N/A',
       r.time_out || 'N/A',
@@ -169,7 +172,7 @@ export const ReportsPage: React.FC = () => {
 
       {/* Tabs list navigation */}
       <div className="flex border-b border-slate-200 gap-2 no-print">
-        {(['daily', 'weekly', 'monthly', 'student'] as ReportTab[]).map((tab) => (
+        {(['daily', 'weekly', 'monthly', 'yearly', 'student'] as ReportTab[]).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -293,10 +296,10 @@ export const ReportsPage: React.FC = () => {
           )}
 
           {/* Table list */}
-          <Table headers={['LRN', 'Student Name', 'Grade & Section', 'Date', 'Time In', 'Time Out', 'Status']}>
+          <Table headers={['Student ID', 'Student Name', 'Grade & Section', 'Date', 'Time In', 'Time Out', 'Status']}>
             {currentRecords.map((record) => (
-              <TableRow key={record.id}>
-                <TableCell className="font-semibold text-slate-805">{record.student_number}</TableCell>
+              <TableRow key={record.id || record.log_id || String(Math.random())}>
+                <TableCell className="font-semibold text-slate-805">{record.student_id_number || record.student_number || record.student_id}</TableCell>
                 <TableCell className="font-bold text-slate-700">{record.student_name}</TableCell>
                 <TableCell className="text-xs text-slate-550">{record.grade_name} — {record.section_name}</TableCell>
                 <TableCell className="text-xs text-slate-500">{record.date}</TableCell>

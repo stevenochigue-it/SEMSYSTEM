@@ -7,10 +7,9 @@ import {
 import { Button } from '../ui/Button';
 import type { Section } from '../../types';
 
-// â”€â”€â”€ Types â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
 interface ParsedStudent {
   student_number: string;
+  student_id_number?: string;
   first_name: string;
   middle_name?: string;
   last_name: string;
@@ -32,11 +31,9 @@ interface Props {
   onSuccess: () => void;
 }
 
-// â”€â”€â”€ Column aliases â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
 const COL_MAP: Record<string, keyof ParsedStudent | 'section_name' | 'grade_name'> = {
-  'student_number': 'student_number', 'student number': 'student_number', 'id': 'student_number',
-  'lrn': 'student_number', 'learner reference number': 'student_number',
+  'student_number': 'student_number', 'student number': 'student_number', 'student_id': 'student_number',
+  'student id': 'student_number', 'id': 'student_number', 'lrn': 'student_number',
   'first_name':    'first_name',  'first name':    'first_name',  'firstname':  'first_name',
   'middle_name':   'middle_name', 'middle name':   'middle_name', 'middlename': 'middle_name', 'mi': 'middle_name',
   'last_name':     'last_name',   'last name':     'last_name',   'lastname':   'last_name', 'surname': 'last_name',
@@ -49,17 +46,18 @@ const REQUIRED: Array<keyof ParsedStudent> = ['student_number', 'first_name', 'l
 
 const API_URL = '/api';
 
-// â”€â”€â”€ Template download â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-
 function downloadTemplate(sections: Section[]) {
-  const headers = ['lrn', 'first_name', 'middle_name', 'last_name', 'section_id'];
+  const headers = ['student_id', 'first_name', 'middle_name', 'last_name', 'section_id'];
+  const sec1 = sections[0]?.section_id ?? sections[0]?.id ?? 1;
+  const sec2 = sections[1]?.section_id ?? sections[1]?.id ?? 2;
+
   const sectionRef = sections.slice(0, 3).map(s =>
-    `[${s.section_id}] ${s.grade_name} - ${s.section_name}`
+    `[${s.section_id ?? s.id}] ${s.grade_name} - ${s.section_name}`
   ).join(' | ');
 
   const sample = [
-    ['109283746501', 'Maria', 'C.', 'Santos', sections[0]?.section_id ?? 1],
-    ['109283746502', 'Jose',  '',  'Reyes',   sections[1]?.section_id ?? 2],
+    ['STU-109283746501', 'Maria', 'C.', 'Santos', sec1],
+    ['STU-109283746502', 'Jose',  '',  'Reyes',   sec2],
   ];
 
   const ws = XLSX.utils.aoa_to_sheet([
@@ -68,13 +66,11 @@ function downloadTemplate(sections: Section[]) {
     [],
     [`Section IDs in this system: ${sectionRef}`],
   ]);
-  ws['!cols'] = headers.map(() => ({ wch: 20 }));
+  ws['!cols'] = headers.map(() => ({ wch: 22 }));
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Students');
   XLSX.writeFile(wb, 'student_import_template.xlsx');
 }
-
-// â”€â”€â”€ Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess }) => {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -85,12 +81,12 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
   const [isLoading, setIsLoading]     = useState(false);
   const [result, setResult]           = useState<ImportResult | null>(null);
 
-  // Build a lookup: "Grade 12 - Einstein" â†’ section_id
   const sectionLookup = new Map<string, number>();
   sections.forEach(s => {
-    sectionLookup.set(`${s.grade_name} - ${s.section_name}`.toLowerCase(), s.section_id);
-    sectionLookup.set(s.section_name.toLowerCase(), s.section_id);
-    sectionLookup.set(String(s.section_id), s.section_id);
+    const sId = s.section_id ?? s.id ?? 0;
+    sectionLookup.set(`${s.grade_name} - ${s.section_name}`.toLowerCase(), sId);
+    sectionLookup.set(s.section_name.toLowerCase(), sId);
+    sectionLookup.set(String(sId), sId);
   });
 
   function resolveSection(raw: any): number {
@@ -126,7 +122,6 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
             if (mapped) norm[mapped] = String(val).trim();
           }
 
-          // Resolve section_id from section_id / section_name / grade+section combo
           if (!norm.section_id && (norm.section_name || norm.grade_name)) {
             const key = norm.grade_name && norm.section_name
               ? `${norm.grade_name} - ${norm.section_name}`
@@ -137,7 +132,7 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
           }
 
           const missing = REQUIRED.filter(f => !norm[f]);
-          if (missing.length) { errors.push(`Row ${rn}: Missing â€” ${missing.join(', ')}`); return; }
+          if (missing.length) { errors.push(`Row ${rn}: Missing — ${missing.join(', ')}`); return; }
           if (!norm.section_id) { errors.push(`Row ${rn}: Could not resolve section. Use a valid section_id.`); return; }
 
           parsed.push(norm as ParsedStudent);
@@ -179,8 +174,7 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
     if (fileRef.current) fileRef.current.value = '';
   };
 
-  // Section map for preview labels
-  const sectionMap = new Map(sections.map(s => [s.section_id, `${s.grade_name} — ${s.section_name}`]));
+  const sectionMap = new Map(sections.map(s => [s.section_id ?? s.id, `${s.grade_name} — ${s.section_name}`]));
 
   return (
     <div className="flex flex-col gap-5 relative">
@@ -201,7 +195,7 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
         })}
       </div>
 
-      {/* â”€â”€â”€ STEP 1: UPLOAD â”€â”€â”€ */}
+      {/* STEP 1: UPLOAD */}
       {step === 'upload' && (
         <div className="flex flex-col gap-4">
           <label htmlFor="excel-upload"
@@ -226,8 +220,8 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
           <div className="rounded-xl border border-blue-100 bg-blue-50 p-4 flex items-start gap-3">
             <AlertTriangle className="h-4 w-4 text-blue-500 mt-0.5 shrink-0" />
             <div className="flex-1 text-xs text-blue-700">
-              <p className="font-semibold mb-1">Required columns: <code>lrn, first_name, last_name, section_id</code></p>
-              <p>You can also use <code>section_name</code> and <code>grade_name</code> instead of <code>section_id</code>. Both <code>lrn</code> and <code>student_number</code> are accepted as the LRN column header.</p>
+              <p className="font-semibold mb-1">Required columns: <code>student_id, first_name, last_name, section_id</code></p>
+              <p>You can also use <code>section_name</code> and <code>grade_name</code> instead of <code>section_id</code>.</p>
               <button onClick={() => downloadTemplate(sections)}
                 className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 hover:text-blue-900 underline">
                 <Download className="h-3.5 w-3.5" /> Download Template (.xlsx)
@@ -237,7 +231,7 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
         </div>
       )}
 
-      {/* â”€â”€â”€ STEP 2: PREVIEW â”€â”€â”€ */}
+      {/* STEP 2: PREVIEW */}
       {step === 'preview' && (
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap gap-3">
@@ -257,7 +251,7 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
           {parseErrors.length > 0 && (
             <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
               <p className="mb-1.5 text-xs font-bold text-amber-700">Skipped rows:</p>
-              {parseErrors.map((e, i) => <p key={i} className="text-xs text-amber-700">â€¢ {e}</p>)}
+              {parseErrors.map((e, i) => <p key={i} className="text-xs text-amber-700">• {e}</p>)}
             </div>
           )}
 
@@ -266,7 +260,7 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
               <table className="min-w-full text-xs">
                 <thead className="sticky top-0 bg-slate-100 z-10">
                   <tr>
-                    {['#', 'LRN', 'First Name', 'M.I.', 'Last Name', 'Section'].map(h => (
+                    {['#', 'Student ID', 'First Name', 'M.I.', 'Last Name', 'Section'].map(h => (
                       <th key={h} className="px-3 py-2.5 text-left font-semibold text-slate-600 whitespace-nowrap">{h}</th>
                     ))}
                   </tr>
@@ -277,7 +271,7 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
                       <td className="px-3 py-2 text-slate-400 font-mono">{i + 1}</td>
                       <td className="px-3 py-2 font-mono text-slate-700">{s.student_number}</td>
                       <td className="px-3 py-2 text-slate-700">{s.first_name}</td>
-                      <td className="px-3 py-2 text-slate-500">{s.middle_name || 'â€”'}</td>
+                      <td className="px-3 py-2 text-slate-500">{s.middle_name || '—'}</td>
                       <td className="px-3 py-2 text-slate-700">{s.last_name}</td>
                       <td className="px-3 py-2">
                         <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">
@@ -306,7 +300,7 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
         </div>
       )}
 
-      {/* â”€â”€â”€ STEP 3: RESULT â”€â”€â”€ */}
+      {/* STEP 3: RESULT */}
       {step === 'result' && result && (
         <div className="flex flex-col gap-4">
           <div className="flex flex-col items-center rounded-xl bg-gradient-to-br from-blue-50 to-teal-50 border border-blue-100 py-7 gap-2">
@@ -333,7 +327,7 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
               <p className="mb-1.5 text-xs font-bold text-red-700 flex items-center gap-1">
                 <AlertTriangle className="h-3.5 w-3.5" /> Skipped rows:
               </p>
-              {result.errors.map((e, i) => <p key={i} className="text-xs text-red-600">â€¢ {e}</p>)}
+              {result.errors.map((e, i) => <p key={i} className="text-xs text-red-600">• {e}</p>)}
             </div>
           )}
 
@@ -347,11 +341,9 @@ export const ExcelImportModal: React.FC<Props> = ({ sections, onClose, onSuccess
       {isLoading && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl bg-white/80 backdrop-blur-sm z-10">
           <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
-          <p className="text-sm font-semibold text-slate-600">Importing studentsâ€¦</p>
+          <p className="text-sm font-semibold text-slate-600">Importing students…</p>
         </div>
       )}
     </div>
   );
 };
-
-

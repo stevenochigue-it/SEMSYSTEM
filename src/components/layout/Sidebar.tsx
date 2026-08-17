@@ -76,8 +76,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
             className="h-10 w-10 rounded-full object-cover border-2 border-blue-400/60 shrink-0"
           />
           <div>
-            <h1 className="text-sm font-bold tracking-wider text-white uppercase">SINHS Gates</h1>
-            <p className="text-[10px] text-blue-400 font-semibold uppercase">QR Entry System</p>
+            <h1 className="text-xs font-bold tracking-wider text-white uppercase">Entrance Monitor</h1>
+            <p className="text-[10px] text-blue-400 font-semibold uppercase">School Gate System</p>
           </div>
         </div>
 
@@ -124,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
           </p>
           <div className="rounded-xl bg-blue-950/30 border border-blue-900/20 p-3 space-y-2.5">
             {[
-              { label: 'Barcode Scanner', status: 'Online',    color: 'bg-green-400' },
+              { label: 'QR Code Scanner', status: 'Online',    color: 'bg-green-400' },
               { label: 'Database (MySQL)', status: 'Connected', color: 'bg-green-400' },
               { label: 'LAN Network',      status: 'Connected', color: 'bg-green-400' },
             ].map((device) => (

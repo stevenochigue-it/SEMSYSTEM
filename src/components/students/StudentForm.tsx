@@ -15,23 +15,24 @@ export const StudentForm: React.FC<StudentFormProps> = ({ student, sections, onS
   const [firstName, setFirstName]         = useState('');
   const [middleName, setMiddleName]       = useState('');
   const [lastName, setLastName]           = useState('');
-  const [sectionId, setSectionId]         = useState<number>(sections[0]?.section_id ?? 0);
+  const [sectionId, setSectionId]         = useState<number>(sections[0]?.section_id ?? sections[0]?.id ?? 0);
   const [photo, setPhoto]                 = useState('');
   const [isSubmitting, setIsSubmitting]   = useState(false);
   const [error, setError]                 = useState<string | null>(null);
 
   useEffect(() => {
+    const firstSecId = sections[0]?.section_id ?? sections[0]?.id ?? 0;
     if (student) {
-      setStudentNumber(student.student_number || student.lrn || '');
+      setStudentNumber(student.student_id_number || student.student_number || student.student_id || '');
       setFirstName(student.first_name);
       setMiddleName(student.middle_name || '');
       setLastName(student.last_name);
-      setSectionId(student.section_id ?? sections[0]?.section_id ?? 0);
+      setSectionId(student.section_id ?? firstSecId);
       setPhoto(student.photo || '');
     } else {
       const rand = String(Math.floor(1000000000 + Math.random() * 9000000000));
-      setStudentNumber(`10${rand}`);
-      if (sections.length > 0) setSectionId(sections[0].section_id);
+      setStudentNumber(`STU-${rand.slice(0, 8)}`);
+      if (sections.length > 0) setSectionId(firstSecId);
     }
   }, [student, sections]);
 
@@ -48,19 +49,19 @@ export const StudentForm: React.FC<StudentFormProps> = ({ student, sections, onS
     e.preventDefault();
     setError(null);
     if (!studentNumber.trim() || !firstName.trim() || !lastName.trim() || !sectionId) {
-      setError('Please fill in all required fields (LRN, First Name, Last Name, Section).');
+      setError('Please fill in all required fields (Student ID, First Name, Last Name, Section).');
       return;
     }
     setIsSubmitting(true);
     try {
       await onSubmit({
-        student_number: studentNumber.trim(),
-        lrn:            studentNumber.trim(),
-        first_name:     firstName.trim(),
-        middle_name:    middleName.trim() || undefined,
-        last_name:      lastName.trim(),
-        section_id:     sectionId,
-        photo:          photo || undefined,
+        student_number:    studentNumber.trim(),
+        student_id_number: studentNumber.trim(),
+        first_name:        firstName.trim(),
+        middle_name:       middleName.trim() || undefined,
+        last_name:         lastName.trim(),
+        section_id:        sectionId,
+        photo:             photo || undefined,
       });
     } catch (err: any) {
       setError(err.message || 'An error occurred while saving.');
@@ -107,15 +108,15 @@ export const StudentForm: React.FC<StudentFormProps> = ({ student, sections, onS
       </div>
 
       <div className="grid grid-cols-2 gap-4">
-        {/* LRN (Learner Reference Number) */}
+        {/* Student ID */}
         <div className="col-span-2">
           <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-            LRN (Learner Reference Number) <span className="text-red-500">*</span>
+            Student ID <span className="text-red-500">*</span>
           </label>
           <input
             type="text" required value={studentNumber}
             onChange={e => setStudentNumber(e.target.value)}
-            placeholder="12-digit LRN (e.g. 109283746501)"
+            placeholder="Unique Student ID (e.g. STU-10928374)"
             className="block w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
           />
         </div>
@@ -171,11 +172,14 @@ export const StudentForm: React.FC<StudentFormProps> = ({ student, sections, onS
           >
             {Object.entries(grouped).map(([gradeName, sects]) => (
               <optgroup key={gradeName} label={gradeName}>
-                {sects.map(s => (
-                  <option key={s.section_id} value={s.section_id}>
-                    {gradeName} — {s.section_name}
-                  </option>
-                ))}
+                {sects.map(s => {
+                  const sId = s.section_id ?? s.id ?? 0;
+                  return (
+                    <option key={sId} value={sId}>
+                      {gradeName} — {s.section_name}
+                    </option>
+                  );
+                })}
               </optgroup>
             ))}
           </select>
@@ -191,5 +195,3 @@ export const StudentForm: React.FC<StudentFormProps> = ({ student, sections, onS
     </form>
   );
 };
-
-

@@ -24,12 +24,12 @@ $stu_prefix_value = 'STU-' . preg_replace('/^STU-?/i', '', $raw_input);
 $numeric_only_value = preg_replace('/^STU-?/i', '', $raw_input);
 
 try {
-    // 1. Find the student record via qr_value OR student_number (supports both "2025001" and "STU-2025001")
+    // Find student record via qr_value OR student_id_number
     $findQR = "SELECT
-                  q.qr_id,
+                  q.id AS qr_id,
                   q.qr_value,
-                  s.student_id,
-                  s.student_number,
+                  s.id AS student_id,
+                  s.student_id_number,
                   s.first_name,
                   s.middle_name,
                   s.last_name,
@@ -38,13 +38,13 @@ try {
                   sec.section_name,
                   gl.grade_name
                FROM students s
-               JOIN sections sec ON s.section_id = sec.section_id
-               JOIN grade_levels gl ON sec.grade_level_id = gl.grade_level_id
-               LEFT JOIN qr_codes q ON q.student_id = s.student_id
+               JOIN sections sec ON s.section_id = sec.id
+               JOIN grade_levels gl ON sec.grade_level_id = gl.id
+               LEFT JOIN qr_codes q ON q.student_id = s.id
                WHERE q.qr_value = :raw_input
                   OR q.qr_value = :stu_prefix
-                  OR s.student_number = :raw_input
-                  OR s.student_number = :numeric_val
+                  OR s.student_id_number = :raw_input
+                  OR s.student_id_number = :numeric_val
                LIMIT 1";
 
     $stmt = $db->prepare($findQR);
@@ -63,26 +63,24 @@ try {
     $student_id = $record['student_id'];
     $qr_id = $record['qr_id'];
 
-    // 2. If the qr_codes row is missing for this student, auto-generate it on the fly!
+    // Auto-create qr_codes row if missing
     if (empty($qr_id)) {
-        $generated_qr = 'STU-' . $record['student_number'];
+        $generated_qr = strpos($record['student_id_number'], 'STU-') === 0 ? $record['student_id_number'] : 'STU-' . $record['student_id_number'];
         $insertQR = $db->prepare("INSERT INTO qr_codes (student_id, qr_value) VALUES (:sid, :qval) ON DUPLICATE KEY UPDATE qr_value = VALUES(qr_value)");
         $insertQR->execute([":sid" => $student_id, ":qval" => $generated_qr]);
 
-        // Get the qr_id
-        $getQrId = $db->prepare("SELECT qr_id FROM qr_codes WHERE student_id = :sid LIMIT 1");
+        $getQrId = $db->prepare("SELECT id FROM qr_codes WHERE student_id = :sid LIMIT 1");
         $getQrId->execute([":sid" => $student_id]);
         $qr_id = $getQrId->fetchColumn();
     }
 
-    // 3. Determine last gate status for this QR
+    // Determine last gate status
     $lastLog = "SELECT status FROM gate_logs WHERE qr_id = :qr_id ORDER BY scan_time DESC LIMIT 1";
     $lastStmt = $db->prepare($lastLog);
     $lastStmt->bindParam(":qr_id", $qr_id);
     $lastStmt->execute();
     $lastRow = $lastStmt->fetch();
 
-    // Toggle: if last was ENTRY → log EXIT; otherwise → log ENTRY
     $newStatus = 'ENTRY';
     $action    = 'time_in';
     if ($lastRow && $lastRow['status'] === 'ENTRY') {
@@ -90,7 +88,7 @@ try {
         $action    = 'time_out';
     }
 
-    // 4. Insert new gate log
+    // Insert new gate log
     $insertLog = "INSERT INTO gate_logs (qr_id, status) VALUES (:qr_id, :status)";
     $insertStmt = $db->prepare($insertLog);
     $insertStmt->bindParam(":qr_id",  $qr_id);
@@ -106,14 +104,15 @@ try {
         "success" => true,
         "student" => [
             "student_id"     => (string)$record['student_id'],
-            "student_number" => $record['student_number'],
+            "student_number" => $record['student_id_number'],
+            "student_id_number" => $record['student_id_number'],
             "first_name"     => $record['first_name'],
             "middle_name"    => $record['middle_name'],
             "last_name"      => $record['last_name'],
             "photo"          => $record['photo'],
             "section_name"   => $record['section_name'],
             "grade_name"     => $record['grade_name'],
-            "qr_value"       => $record['qr_value'] ?: ('STU-' . $record['student_number']),
+            "qr_value"       => $record['qr_value'] ?: $record['student_id_number'],
             "last_status"    => $newStatus,
         ],
         "message" => $message,
