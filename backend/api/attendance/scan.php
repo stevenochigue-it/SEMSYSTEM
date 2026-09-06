@@ -15,7 +15,7 @@ $data = json_decode(file_get_contents("php://input"));
 
 if (empty($data->qr_value)) {
     http_response_code(400);
-    echo json_encode(["success" => false, "message" => "No QR code or Student ID provided."]);
+    echo json_encode(["success" => false, "message" => "No QR code provided."]);
     exit;
 }
 
@@ -55,7 +55,7 @@ try {
 
     if ($stmt->rowCount() === 0) {
         http_response_code(200);
-        echo json_encode(["success" => false, "message" => "ACCESS DENIED — Student ID or QR code not recognized."]);
+        echo json_encode(["success" => false, "message" => "ACCESS DENIED — QR code not recognized."]);
         exit;
     }
 

@@ -81,7 +81,52 @@ export const apiService = {
 
   // --- Gate Logs -------------------------------------------------------------
   async getAttendance(): Promise<GateLog[]> {
-    return fetchJson<GateLog[]>('/attendance/index.php');
+    const raw = await fetchJson<any[]>('/attendance/index.php');
+    return raw.map((r: any) => {
+      let date = r.date;
+      let time_in = r.time_in;
+      let time_out = r.time_out;
+
+      if (r.scan_time) {
+        const parts = r.scan_time.split(' ');
+        date = parts[0];
+        const timePart = parts[1] || '';
+        const [hStr, mStr] = timePart.split(':');
+        let h = parseInt(hStr || '0', 10);
+        const m = mStr || '00';
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        const formattedTime = `${String(h).padStart(2, '0')}:${m} ${ampm}`;
+
+        if (r.status === 'ENTRY' || r.status === 'inside') {
+          time_in = formattedTime;
+        } else {
+          time_out = formattedTime;
+        }
+      }
+
+      const sName = r.student_name || `${r.first_name || ''} ${r.last_name || ''}`.trim();
+      const sNum = r.student_number || r.student_id_number || r.student_id;
+
+      return {
+        ...r,
+        id: String(r.id || r.log_id || Math.random()),
+        date: date,
+        time_in: time_in,
+        time_out: time_out,
+        student_name: sName,
+        student_number: sNum,
+        student_id_number: sNum,
+      };
+    });
+  },
+
+  async seedMockAttendance(): Promise<{ success: boolean; count: number; message: string }> {
+    return fetchJson('/attendance/seed.php', { method: 'POST' });
+  },
+
+  async clearMockAttendance(): Promise<{ success: boolean; count: number; message: string }> {
+    return fetchJson('/attendance/clear.php', { method: 'POST' });
   },
 
   // --- Dashboard -------------------------------------------------------------

@@ -15,14 +15,14 @@ export const StudentsPage: React.FC = () => {
   const { students, attendance, sections, addStudent, updateStudent, deleteStudent, refreshData } = useData();
 
   // Search & Filter state
-  const [searchTerm, setSearchTerm]       = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedGrade, setSelectedGrade] = useState('All Grades');
   const [selectedSection, setSelectedSection] = useState('All Sections');
 
   // Modal states
-  const [formOpen, setFormOpen]     = useState(false);
+  const [formOpen, setFormOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
-  const [qrOpen, setQrOpen]         = useState(false);
+  const [qrOpen, setQrOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
 
   const [currentStudent, setCurrentStudent] = useState<Student | null>(null);
@@ -58,9 +58,9 @@ export const StudentsPage: React.FC = () => {
     const fullName = `${s.first_name} ${s.middle_name ?? ''} ${s.last_name}`.toLowerCase();
     const matchesSearch =
       fullName.includes(searchTerm.toLowerCase()) ||
-      s.student_number.toLowerCase().includes(searchTerm.toLowerCase());
+      (s.student_number || '').toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesGrade   = selectedGrade === 'All Grades'   || s.grade_name   === selectedGrade;
+    const matchesGrade = selectedGrade === 'All Grades' || s.grade_name === selectedGrade;
     const matchesSection = selectedSection === 'All Sections' || s.section_name === selectedSection;
 
     return matchesSearch && matchesGrade && matchesSection;
@@ -108,7 +108,7 @@ export const StudentsPage: React.FC = () => {
             <input
               type="text" value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              placeholder="Search by LRN or name..."
+              placeholder="Search by StudentID or name..."
               className="w-full rounded-lg border border-slate-200 pl-9 pr-3 py-2 text-sm text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>

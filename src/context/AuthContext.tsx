@@ -7,6 +7,7 @@ interface AuthContextType {
   token: string | null;
   login: (credentials: LoginCredentials) => Promise<void>;
   logout: () => void;
+  switchRole: (role: 'admin' | 'guard') => void;
   isLoading: boolean;
 }
 
@@ -51,8 +52,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('sem_auth_user');
   };
 
+  const switchRole = (role: 'admin' | 'guard') => {
+    const mockUser: AuthUser = {
+      id: role === 'admin' ? '1' : '2',
+      username: role === 'admin' ? 'admin' : 'guard',
+      full_name: role === 'admin' ? 'Dev Admin' : 'Security Officer',
+      role: role,
+      status: 'active',
+    };
+    const mockToken = `dev_token_${role}_${Date.now()}`;
+    setUser(mockUser);
+    setToken(mockToken);
+    localStorage.setItem('sem_auth_token', mockToken);
+    localStorage.setItem('sem_auth_user', JSON.stringify(mockUser));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ user, token, login, logout, switchRole, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

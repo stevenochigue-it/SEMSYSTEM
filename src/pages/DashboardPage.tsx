@@ -79,7 +79,7 @@ export const DashboardPage: React.FC = () => {
 
   return (
     <div className="space-y-6 pb-8 bg-[#f8fafc] -m-6 p-6 min-h-screen">
-      
+
       {/* Top Header & Search Bar */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -90,7 +90,7 @@ export const DashboardPage: React.FC = () => {
           </div>
           <h1 className="text-2xl font-black text-slate-900 tracking-tight">Overview</h1>
         </div>
-        
+
         {/* Right Search & Controls */}
         <div className="flex items-center gap-3">
           <div className="relative w-64 sm:w-72">
@@ -99,7 +99,7 @@ export const DashboardPage: React.FC = () => {
               type="text"
               value={searchTerm}
               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-              placeholder="Search students, LRN, sections..."
+              placeholder="Search students, StudentID, sections..."
               className="w-full rounded-xl border border-slate-200/90 bg-white pl-9 pr-3.5 py-2 text-xs text-slate-800 placeholder-slate-400 shadow-xs focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all"
             />
           </div>
@@ -147,7 +147,7 @@ export const DashboardPage: React.FC = () => {
 
       {/* Overview Stat Cards Row (4 Cards Grid) */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        
+
         {/* Card 1: Total Students */}
         <div className="rounded-2xl bg-white p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
@@ -240,7 +240,7 @@ export const DashboardPage: React.FC = () => {
 
       {/* Middle Dual Charts Grid: Left Bar Chart (2/3) + Right Curve Sparkline (1/3) */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        
+
         {/* Left 2 Cols: Main Bar Chart (Shopall Style Rounded Bar Chart) */}
         <div className="lg:col-span-2 rounded-2xl bg-white p-6 border border-slate-200/80 shadow-xs">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
@@ -310,8 +310,8 @@ export const DashboardPage: React.FC = () => {
               <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="purpleGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#818cf8" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#818cf8" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#818cf8" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#818cf8" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <Area type="monotone" dataKey="entries" stroke="#4f46e5" strokeWidth={3} fillOpacity={1} fill="url(#purpleGradient)" dot={{ r: 4, fill: '#4f46e5', strokeWidth: 2, stroke: '#ffffff' }} />
@@ -352,7 +352,7 @@ export const DashboardPage: React.FC = () => {
 
       {/* Bottom Table Section: "Recent Gate Logs" Shopall Tabular Style */}
       <div className="rounded-2xl bg-white border border-slate-200/80 shadow-xs overflow-hidden">
-        
+
         {/* Table Controls Header */}
         <div className="flex flex-col gap-4 p-5 border-b border-slate-100 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -368,7 +368,7 @@ export const DashboardPage: React.FC = () => {
             </div>
             <button
               onClick={() => {
-                const csvContent = "data:text/csv;charset=utf-8," 
+                const csvContent = "data:text/csv;charset=utf-8,"
                   + ["Student ID,Name,Grade & Section,Time,Status"].join(",") + "\n"
                   + filteredAttendance.map(r => `${r.student_id_number || r.student_number || r.student_id},"${r.student_name}",${r.grade_name || ''} - ${r.section_name || ''},${r.time_out || r.time_in},${r.time_out ? 'Exit' : 'Entry'}`).join("\n");
                 const encodedUri = encodeURI(csvContent);
@@ -397,16 +397,14 @@ export const DashboardPage: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => { setActiveTab(tab.id as any); setCurrentPage(1); }}
-              className={`flex items-center gap-2 border-b-2 px-4 py-2.5 text-xs font-bold transition-all whitespace-nowrap ${
-                activeTab === tab.id
-                  ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-slate-400 hover:text-slate-600'
-              }`}
+              className={`flex items-center gap-2 border-b-2 px-4 py-2.5 text-xs font-bold transition-all whitespace-nowrap ${activeTab === tab.id
+                ? 'border-indigo-600 text-indigo-600'
+                : 'border-transparent text-slate-400 hover:text-slate-600'
+                }`}
             >
               <span>{tab.label}</span>
-              <span className={`rounded-md px-1.5 py-0.5 text-[10px] ${
-                activeTab === tab.id ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-100 text-slate-500'
-              }`}>
+              <span className={`rounded-md px-1.5 py-0.5 text-[10px] ${activeTab === tab.id ? 'bg-indigo-50 text-indigo-700' : 'bg-slate-100 text-slate-500'
+                }`}>
                 {tab.count}
               </span>
             </button>
@@ -446,11 +444,10 @@ export const DashboardPage: React.FC = () => {
                         {record.time_out || record.time_in}
                       </td>
                       <td className="py-3.5 px-5 text-right">
-                        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold border ${
-                          isEntry
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                            : 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                        }`}>
+                        <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold border ${isEntry
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          : 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                          }`}>
                           <span className={`h-1.5 w-1.5 rounded-full ${isEntry ? 'bg-emerald-500' : 'bg-indigo-500'}`} />
                           {isEntry ? 'Inside Campus' : 'Exited Campus'}
                         </span>
@@ -490,7 +487,7 @@ export const DashboardPage: React.FC = () => {
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
-            
+
             <span className="px-3 py-1 bg-indigo-50 text-indigo-700 font-bold rounded-lg border border-indigo-100 text-xs">
               {currentPage} / {totalPages}
             </span>

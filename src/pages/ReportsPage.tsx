@@ -74,7 +74,7 @@ export const ReportsPage: React.FC = () => {
     return (
       s.first_name.toLowerCase().includes(q) ||
       s.last_name.toLowerCase().includes(q) ||
-      s.student_number.toLowerCase().includes(q)
+      (s.student_number && s.student_number.toLowerCase().includes(q))
     );
   }).slice(0, 5);
 
@@ -210,7 +210,7 @@ export const ReportsPage: React.FC = () => {
                 <button
                   key={s.id}
                   onClick={() => {
-                    setSelectedStudentNumber(s.student_number);
+                    setSelectedStudentNumber(s.student_number || '');
                     setStudentSearch('');
                   }}
                   className="w-full flex items-center justify-between px-4 py-2.5 text-left text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors"

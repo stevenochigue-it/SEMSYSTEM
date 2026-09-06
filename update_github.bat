@@ -1,0 +1,9 @@
+@echo off
+echo Staging changes...
+git add .
+echo Committing changes...
+git commit -m "Update SEMSYSTEM: attendance scanning, gate monitor UI, backend API, and type fixes"
+echo Pushing to GitHub...
+git push origin main
+echo Done!
+pause

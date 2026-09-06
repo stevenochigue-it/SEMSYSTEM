@@ -1,4 +1,4 @@
-﻿import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import type { Student, GateLog, SystemAdmin, Section, DashboardStats, ChartDataPoint, ScanResult } from '../types';
 import { apiService } from '../services/api';
 
@@ -11,6 +11,8 @@ interface DataContextType {
   chartData: ChartDataPoint[];
   isLoading: boolean;
   refreshData: () => Promise<void>;
+  seedMockAttendance: () => Promise<void>;
+  clearMockAttendance: () => Promise<void>;
   addStudent: (student: Omit<Student, 'student_id' | 'created_at' | 'qr_value' | 'qr_id'>) => Promise<void>;
   updateStudent: (id: string, student: Partial<Student>) => Promise<void>;
   deleteStudent: (id: string) => Promise<void>;
@@ -81,6 +83,16 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return result;
   };
 
+  const seedMockAttendance = async () => {
+    await apiService.seedMockAttendance();
+    await refreshData();
+  };
+
+  const clearMockAttendance = async () => {
+    await apiService.clearMockAttendance();
+    await refreshData();
+  };
+
   const addUser = async (_userData: Omit<SystemAdmin, 'id'>) => { await refreshData(); };
   const updateUser = async (_id: string, _userData: Partial<SystemAdmin>) => { await refreshData(); };
   const deleteUser = async (_id: string) => { await refreshData(); };
@@ -89,7 +101,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return (
     <DataContext.Provider value={{
       students, attendance, sections, users,
-      stats, chartData, isLoading, refreshData,
+      stats, chartData, isLoading, refreshData, seedMockAttendance, clearMockAttendance,
       addStudent, updateStudent, deleteStudent,
       scanQR, addUser, updateUser, deleteUser, resetStats,
     }}>

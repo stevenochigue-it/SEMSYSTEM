@@ -28,6 +28,10 @@ export interface Student {
   section?: string;
   grade_level_id?: number;
   grade_name?: string;
+  course?: string;
+  year_level?: string;
+  contact_number?: string;
+  guardian_name?: string;
   qr_id?: string;
   qr_value?: string;
   created_at?: string;
@@ -54,6 +58,8 @@ export interface GateLog {
   photo?: string;
   section_name?: string;
   grade_name?: string;
+  course?: string;
+  year_level?: string;
 }
 
 export interface SystemAdmin {
@@ -108,6 +114,7 @@ export interface AuthUser {
   last_name?: string;
   full_name: string;
   role: 'admin' | 'guard' | string;
+  status?: string;
 }
 
 export interface LoginCredentials {

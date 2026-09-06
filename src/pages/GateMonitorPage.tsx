@@ -26,7 +26,7 @@ export interface ActivityItem {
 
 export const GateMonitorPage: React.FC = () => {
   const { user, logout } = useAuth();
-  const { scanQR } = useData();
+  const { scanQR, students } = useData();
 
   const [scanValue, setScanValue] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,6 +59,109 @@ export const GateMonitorPage: React.FC = () => {
   }, []);
 
   const focusInput = () => { if (inputRef.current) inputRef.current.focus(); };
+
+  const triggerMockScan = async () => {
+    const sampleStudents = students && students.length > 0 ? students : [
+      {
+        id: '1',
+        student_id: '1',
+        student_id_number: 'STU-2026-001',
+        first_name: 'Maria',
+        last_name: 'Santos',
+        middle_name: 'Clara',
+        photo: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+        section_name: 'Einstein',
+        grade_name: 'Grade 10',
+        qr_value: 'STU-2026-001',
+      },
+      {
+        id: '2',
+        student_id: '2',
+        student_id_number: 'STU-2026-002',
+        first_name: 'Juan',
+        last_name: 'Dela Cruz',
+        middle_name: 'Reyes',
+        photo: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=300&q=80',
+        section_name: 'Newton',
+        grade_name: 'Grade 11',
+        qr_value: 'STU-2026-002',
+      },
+      {
+        id: '3',
+        student_id: '3',
+        student_id_number: 'STU-2026-003',
+        first_name: 'Angela',
+        last_name: 'Reyes',
+        middle_name: 'Gomez',
+        photo: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80',
+        section_name: 'Tesla',
+        grade_name: 'Grade 12',
+        qr_value: 'STU-2026-003',
+      },
+    ];
+
+    const randomStudent = sampleStudents[Math.floor(Math.random() * sampleStudents.length)];
+    const payload = randomStudent.qr_value || randomStudent.student_id_number || 'STU-2026-001';
+
+    try {
+      await processScanPayload(payload);
+    } catch {
+      // Direct mock display fallback if backend endpoint fails
+      const now = new Date();
+      const timeStr = format(now, 'hh:mm A');
+      const dateStr = format(now, 'MMM DD, YYYY');
+      const isEntry = totalEntries <= totalExits;
+
+      const mockResult: ScanResult = {
+        success: true,
+        message: isEntry ? 'ACCESS GRANTED — Entry Recorded' : 'ACCESS GRANTED — Exit Recorded',
+        action: isEntry ? 'time_in' : 'time_out',
+        status: isEntry ? 'ENTRY' : 'EXIT',
+        student: {
+          student_id: (randomStudent as any).student_id || randomStudent.id || '1',
+          student_number: randomStudent.student_id_number || 'STU-2026-001',
+          student_id_number: randomStudent.student_id_number || 'STU-2026-001',
+          first_name: randomStudent.first_name || 'Maria',
+          last_name: randomStudent.last_name || 'Santos',
+          middle_name: randomStudent.middle_name || '',
+          photo: randomStudent.photo || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+          section_name: randomStudent.section_name || 'Einstein',
+          grade_name: randomStudent.grade_name || 'Grade 10',
+          qr_value: payload,
+          last_status: isEntry ? 'ENTRY' : 'EXIT',
+        },
+      };
+
+      const newItemId = `scan-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+      const newActivity: ActivityItem = {
+        id: newItemId,
+        result: mockResult,
+        scannedAtTime: timeStr,
+        scannedAtDate: dateStr,
+        gateName: 'Main Gate',
+        isNew: true,
+      };
+
+      if (isEntry) setTotalEntries((prev) => prev + 1);
+      else setTotalExits((prev) => prev + 1);
+
+      setActivityLogs((prev) => [newActivity, ...prev].slice(0, 6));
+
+      const timer = setTimeout(() => {
+        setActivityLogs((prev) => prev.filter((item) => item.id !== newItemId));
+        highlightTimers.current.delete(newItemId);
+      }, 3000);
+      highlightTimers.current.set(newItemId, timer);
+    }
+  };
+
+  useEffect(() => {
+    const handleCustomMockScan = () => {
+      triggerMockScan();
+    };
+    window.addEventListener('sem-trigger-mock-scan', handleCustomMockScan);
+    return () => window.removeEventListener('sem-trigger-mock-scan', handleCustomMockScan);
+  }, [students, totalEntries, totalExits]);
 
   const processScanPayload = async (payload: string) => {
     setIsSubmitting(true);
@@ -202,7 +305,7 @@ export const GateMonitorPage: React.FC = () => {
                 type="text"
                 value={scanValue}
                 onChange={(e) => setScanValue(e.target.value)}
-                placeholder="Scan QR Code or type Student ID and press Enter..."
+                placeholder="Scan QR Code..."
                 className="w-full rounded-xl border-2 border-slate-200 pl-11 pr-4 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 bg-white transition-all"
               />
             </div>
@@ -211,7 +314,7 @@ export const GateMonitorPage: React.FC = () => {
               disabled={isSubmitting || !scanValue.trim()}
               className="shrink-0 px-6 py-2.5 rounded-xl font-extrabold text-sm bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-all"
             >
-              {isSubmitting ? 'Processing...' : 'Record Scan'}
+              {isSubmitting ? 'Processing...' : 'Scan QR'}
             </Button>
           </form>
         </div>
