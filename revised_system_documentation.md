@@ -62,18 +62,39 @@ The School Entrance Monitoring System (SEMSYSTEM) is an integrated, web-based ga
 
 ```mermaid
 erDiagram
+    %% ENROLLMENT & TEACHERS SUBSYSTEM
     GRADE_LEVEL ||--|{ SECTION : "contains"
-    SECTION ||--|{ STUDENT : "enrolls"
+    ENROLLMENT }|--|| STUDENT : "assigned to"
+    ENROLLMENT }|--|| GRADE_LEVEL : "belongs to"
+    ENROLLMENT }|--|| SECTION : "belongs to"
+    TEACHER ||--|| SECTION : "advises"
+
+    %% ATTENDANCE & GATE SUBSYSTEM
     USER_ACCOUNT ||--|{ STUDENT : "registers"
     STUDENT ||--|| QR_CODE : "is assigned"
     QR_CODE ||--|{ GATE_LOG : "generates"
+    STUDENT ||--|{ ATTENDANCE : "tracks"
+    GATE_LOG ||--|{ ATTENDANCE : "compiles into"
+
+    ENROLLMENT {
+        Attribute School_Year
+        Attribute Enrollment_Status
+        Attribute Enrollment_Date
+    }
 
     GRADE_LEVEL {
         Attribute Grade_Level_Name
     }
 
+    TEACHER {
+        Attribute Teacher_Full_Name
+        Attribute Department_Or_Subject
+        Attribute Contact_Number
+    }
+
     SECTION {
         Attribute Section_Name
+        Attribute Assigned_Adviser_Name
     }
 
     USER_ACCOUNT {
@@ -105,31 +126,50 @@ erDiagram
         Attribute Scan_Date_And_Time
         Attribute Gate_Passage_Status
     }
+
+    ATTENDANCE {
+        Attribute Attendance_Date
+        Attribute Daily_Status
+        Attribute Total_Hours_Inside
+    }
 ```
 
 ### Conceptual Entity & Attribute Inventory
 
-1. **`USER_ACCOUNT`** *(Table: `users`)*
+#### 🔵 Enrollment / Teachers Subsystem (Top Module)
+1. **`GRADE_LEVEL`** *(Table: `grade_levels`)*
+   * **Attributes:** Grade Level Name *(e.g., Grade 7 to Grade 12)*
+2. **`SECTION`** *(Table: `sections`)*
+   * **Attributes:** Section Name *(e.g., Diamond, GAS-A)*, Assigned Adviser Name
+3. **`TEACHER`** *(Table: `teachers`)*
+   * **Attributes:** Teacher Full Name, Department or Subject, Contact Number *(Master List of Teachers)*
+4. **`ENROLLMENT`** *(Table: `enrollments`)*
+   * **Attributes:** School Year *(e.g., S.Y. 2025–2026)*, Enrollment Status *(Enrolled/Transferred/Graduated)*, Enrollment Date
+
+#### 🟢 Attendance Subsystem (Bottom Module)
+5. **`USER_ACCOUNT`** *(Table: `users`)*
    * **Attributes:** Username, Password, First Name, Middle Name, Last Name, User Role, Account Activation Status, Creation Timestamp
-2. **`GRADE_LEVEL`** *(Table: `grade_levels`)*
-   * **Attributes:** Grade Level Name *(e.g., Grade 7, Grade 11)*
-3. **`SECTION`** *(Table: `sections`)*
-   * **Attributes:** Section Name *(e.g., Diamond, GAS-A)*
-4. **`STUDENT`** *(Table: `students`)*
+6. **`STUDENT`** *(Table: `students`)*
    * **Attributes:** Student ID Number, First Name, Middle Name, Last Name, Profile Photo, Creation Timestamp
-5. **`QR_CODE`** *(Table: `qr_codes`)*
+7. **`QR_CODE`** *(Table: `qr_codes`)*
    * **Attributes:** QR Value, Creation Timestamp
-6. **`GATE_LOG`** *(Associative Entity - Table: `gate_logs`)*
+8. **`GATE_LOG`** *(Associative Entity - Table: `gate_logs`)*
    * **Attributes:** Scan Date & Time, Gate Passage Status *(ENTRY / EXIT)*
+9. **`ATTENDANCE`** *(Table: `attendance`)*
+   * **Attributes:** Attendance Date, Daily Status *(Present / Late / Absent)*, Total Hours Inside
 
 ---
 
-### Conceptual Relationship Rules & Associative Entity Discussion
+### Conceptual Relationship Rules & Subsystem Mapping
 
-* **`GRADE_LEVEL` contains `SECTION` (1-to-Many):** One Grade Level contains multiple class sections. Each section belongs to exactly one Grade Level.
-* **`SECTION` enrolls `STUDENT` (1-to-Many):** One Section enrolls multiple students. Each student belongs to one designated class section.
-* **`USER_ACCOUNT` registers `STUDENT` (1-to-Many):** One System User Account (School ICT Coordinator) registers and manages multiple student records in the database.
-* **`STUDENT` is assigned `QR_CODE` (1-to-1):** Each enrolled student is assigned exactly one unique QR Code credential.
-* **`GATE_LOG` as an Associative Entity (1-to-Many):** `GATE_LOG` functions as an **Associative Entity** linking a student's assigned `QR_CODE` with their real-time gate passage events, recording the `Scan Date & Time` and `Gate Passage Status (ENTRY / EXIT)` for every scan event.
-
-
+* **Enrollment / Teachers Subsystem (`GRADE_LEVEL` ➔ `SECTION`, `TEACHER` & `ENROLLMENT`):** 
+  * `GRADE_LEVEL` contains `SECTION` (1-to-Many): Each Grade Level contains multiple class sections (`sections.grade_level_id` Foreign Key references `grade_levels.id`).
+  * `TEACHER` advises `SECTION` (1-to-1): Each class section is assigned one designated Teacher Adviser (`sections.teacher_id` Foreign Key references `teachers.id`).
+  * `ENROLLMENT` assigned to `STUDENT` (Many-to-1): An enrollment record assigns the student to a Section for the given School Year.
+  * `ENROLLMENT` belongs to `GRADE_LEVEL` (Many-to-1): Assigns the student's designated Grade Level.
+  * `ENROLLMENT` belongs to `SECTION` (Many-to-1): Assigns the student to a specific class Section.
+* **Attendance Subsystem (`STUDENT` ➔ `QR_CODE` ➔ `GATE_LOG` ➔ `ATTENDANCE`):**
+  * `USER_ACCOUNT` registers `STUDENT` (1-to-Many): System User Account (School ICT Coordinator) registers student profiles.
+  * `STUDENT` is assigned `QR_CODE` (1-to-1): Unique QR code credential assigned for campus access.
+  * `QR_CODE` generates `GATE_LOG` (1-to-Many): Real-time gate terminal scan events (ENTRY / EXIT).
+  * `GATE_LOG` compiles into `ATTENDANCE` (1-to-Many): Gate scans aggregate into daily student **`ATTENDANCE`** records shown on the Admin Dashboard.

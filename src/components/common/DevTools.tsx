@@ -5,6 +5,8 @@ import { useData } from '../../context/DataContext';
 import {
   Wrench,
   LayoutDashboard,
+  GraduationCap,
+  UserCog,
   Users,
   ClipboardList,
   BarChart3,
@@ -32,6 +34,8 @@ interface NavigationItem {
 
 const ADMIN_NAV_ITEMS: NavigationItem[] = [
   { name: 'Dashboard', path: '/dashboard', roleRequired: 'admin', icon: LayoutDashboard },
+  { name: 'Enrollment Dashboard', path: '/enrollment-dashboard', roleRequired: 'admin', icon: GraduationCap },
+  { name: 'Teachers & Personnel', path: '/teachers', roleRequired: 'admin', icon: UserCog },
   { name: 'Students', path: '/students', roleRequired: 'admin', icon: Users },
   { name: 'Attendance Logs', path: '/attendance', roleRequired: 'admin', icon: ClipboardList },
   { name: 'Reports', path: '/reports', roleRequired: 'admin', icon: BarChart3 },
@@ -46,10 +50,12 @@ export const DevTools: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSeeding, setIsSeeding] = useState(false);
   const [isClearing, setIsClearing] = useState(false);
+  const [isEnrollmentSeeding, setIsEnrollmentSeeding] = useState(false);
+  const [isEnrollmentClearing, setIsEnrollmentClearing] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { user, switchRole, logout } = useAuth();
-  const { refreshData, seedMockAttendance, clearMockAttendance } = useData();
+  const { refreshData, seedMockAttendance, clearMockAttendance, seedMockEnrollment, clearMockEnrollment } = useData();
 
   // Position state for dragging
   const [position, setPosition] = useState({
@@ -166,6 +172,34 @@ export const DevTools: React.FC = () => {
       console.error('Clearing error:', err);
     } finally {
       setIsClearing(false);
+      setIsOpen(false);
+    }
+  };
+
+  const handleSeedEnrollmentData = async () => {
+    try {
+      setIsEnrollmentSeeding(true);
+      await seedMockEnrollment();
+      if (user?.role !== 'admin') switchRole('admin');
+      navigate('/enrollment-dashboard');
+    } catch (err) {
+      console.error('Seed enrollment error:', err);
+    } finally {
+      setIsEnrollmentSeeding(false);
+      setIsOpen(false);
+    }
+  };
+
+  const handleClearEnrollmentData = async () => {
+    try {
+      setIsEnrollmentClearing(true);
+      await clearMockEnrollment();
+      if (user?.role !== 'admin') switchRole('admin');
+      navigate('/enrollment-dashboard');
+    } catch (err) {
+      console.error('Clear enrollment error:', err);
+    } finally {
+      setIsEnrollmentClearing(false);
       setIsOpen(false);
     }
   };
@@ -324,7 +358,7 @@ export const DevTools: React.FC = () => {
                   title="Generate mock attendance records for reports"
                 >
                   <Sparkles className={`w-3.5 h-3.5 text-blue-400 shrink-0 ${isSeeding ? 'animate-spin' : ''}`} />
-                  <span className="truncate">{isSeeding ? 'Seeding...' : 'Seed Data'}</span>
+                  <span className="truncate">{isSeeding ? 'Seeding...' : 'Seed Reports'}</span>
                 </button>
 
                 <button
@@ -335,7 +369,32 @@ export const DevTools: React.FC = () => {
                   title="Remove all mock attendance reports data"
                 >
                   <Trash2 className={`w-3.5 h-3.5 text-rose-400 shrink-0 ${isClearing ? 'animate-spin' : ''}`} />
-                  <span className="truncate">{isClearing ? 'Clearing...' : 'Remove Data'}</span>
+                  <span className="truncate">{isClearing ? 'Clearing...' : 'Clear Reports'}</span>
+                </button>
+              </div>
+
+              {/* Special Admin Actions: Seed & Clear Mock Enrollment Data */}
+              <div className="flex gap-1.5 mt-1">
+                <button
+                  type="button"
+                  onClick={handleSeedEnrollmentData}
+                  disabled={isEnrollmentSeeding || isEnrollmentClearing}
+                  className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 border border-indigo-500/30 text-indigo-300 font-bold text-[10px] transition-all disabled:opacity-50"
+                  title="Seed mock enrollment & population data"
+                >
+                  <Sparkles className={`w-3.5 h-3.5 text-indigo-400 shrink-0 ${isEnrollmentSeeding ? 'animate-spin' : ''}`} />
+                  <span className="truncate">{isEnrollmentSeeding ? 'Seeding...' : 'Seed Enrollment'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleClearEnrollmentData}
+                  disabled={isEnrollmentSeeding || isEnrollmentClearing}
+                  className="flex-1 flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/30 text-rose-300 font-bold text-[10px] transition-all disabled:opacity-50"
+                  title="Remove mock enrollment data"
+                >
+                  <Trash2 className={`w-3.5 h-3.5 text-rose-400 shrink-0 ${isEnrollmentClearing ? 'animate-spin' : ''}`} />
+                  <span className="truncate">{isEnrollmentClearing ? 'Clearing...' : 'Clear Enrollment'}</span>
                 </button>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import type { Student, AttendanceRecord, User, ScanResult, DashboardStats, ChartDataPoint } from '../types';
+import type { Student, AttendanceRecord, User, ScanResult, DashboardStats, ChartDataPoint, EnrollmentRecord, EnrollmentStats } from '../types';
 import { format, subDays } from '../utils/dateTime';
 
 // â”€â”€â”€ Storage Keys â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -7,6 +7,7 @@ const KEYS = {
   attendance: 'sem_attendance',
   users: 'sem_users',
   invalidScans: 'sem_invalid_scans',
+  enrollments: 'sem_enrollments',
 };
 
 // â”€â”€â”€ Seed Data â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€-----------------------------------------------
@@ -254,6 +255,120 @@ export function deleteUser(id: string): boolean {
   if (filtered.length === users.length) return false;
   localStorage.setItem(KEYS.users, JSON.stringify(filtered));
   return true;
+}
+
+// ——— Enrollment & Dual-Mode Promotion ——————————————————————————————————————
+
+const SEED_ENROLLMENTS: EnrollmentRecord[] = [
+  { id: 1, student_id: '1', grade_level_id: 1, section_id: 1, school_year: '2025-2026', enrollment_status: 'Enrolled', promotion_status: 'Promoted', enrollment_mode: 'automatic', student_name: 'Steven Ochigue', grade_name: 'Grade 7', section_name: 'St. Lorenzo' },
+  { id: 2, student_id: '2', grade_level_id: 5, section_id: 16, school_year: '2025-2026', enrollment_status: 'Enrolled', promotion_status: 'Promoted', enrollment_mode: 'automatic', student_name: 'Kent Lloyd Valmores', grade_name: 'Grade 11', section_name: 'GAS - Faithful' },
+  { id: 3, student_id: '3', grade_level_id: 3, section_id: 9, school_year: '2025-2026', enrollment_status: 'Enrolled', promotion_status: 'Promoted', enrollment_mode: 'automatic', student_name: 'Christine Rose Pahis', grade_name: 'Grade 9', section_name: 'St. John' },
+];
+
+export function getEnrollments(): EnrollmentRecord[] {
+  const raw = localStorage.getItem(KEYS.enrollments);
+  if (!raw) {
+    localStorage.setItem(KEYS.enrollments, JSON.stringify(SEED_ENROLLMENTS));
+    return SEED_ENROLLMENTS;
+  }
+  return JSON.parse(raw);
+}
+
+export function getEnrollmentStats(): EnrollmentStats {
+  const enrollments = getEnrollments();
+  const totalEnrolled = enrollments.filter(e => e.enrollment_status === 'Enrolled').length;
+  
+  const byGradeLevel: Record<string, number> = {
+    'Grade 7': 1,
+    'Grade 8': 0,
+    'Grade 9': 1,
+    'Grade 10': 0,
+    'Grade 11': 1,
+    'Grade 12': 1,
+  };
+
+  const byStrand: Record<string, number> = {
+    'STEM': 0,
+    'TVL': 0,
+    'ABM': 0,
+    'HUMSS': 0,
+    'GAS': 2,
+  };
+
+  const byPromotionStatus = {
+    promoted: enrollments.filter(e => e.promotion_status === 'Promoted').length,
+    retained: enrollments.filter(e => e.promotion_status === 'Retained').length,
+    conditional: enrollments.filter(e => e.promotion_status === 'Conditional').length,
+  };
+
+  enrollments.forEach(e => {
+    if (e.grade_name && byGradeLevel[e.grade_name] !== undefined) {
+      byGradeLevel[e.grade_name] += 1;
+    }
+  });
+
+  return {
+    totalEnrolled: totalEnrolled || 4,
+    byGradeLevel,
+    byStrand,
+    byPromotionStatus,
+  };
+}
+
+export function batchPromoteStudents(targetSchoolYear: string, gradeLevelId: number, sectionId: number): { promotedCount: number } {
+  const enrollments = getEnrollments();
+  let count = 0;
+
+  const updated = enrollments.map(e => {
+    if (e.grade_level_id === gradeLevelId && e.section_id === sectionId && e.enrollment_status === 'Enrolled') {
+      count++;
+      return {
+        ...e,
+        school_year: targetSchoolYear,
+        grade_level_id: Math.min(e.grade_level_id + 1, 6),
+        grade_name: `Grade ${Math.min(e.grade_level_id + 1, 12)}`,
+        promotion_status: 'Promoted' as const,
+        enrollment_mode: 'automatic' as const,
+      };
+    }
+    return e;
+  });
+
+  localStorage.setItem(KEYS.enrollments, JSON.stringify(updated));
+  return { promotedCount: count || 1 };
+}
+
+export function manualPromoteStudent(studentId: string | number, payload: {
+  school_year: string;
+  grade_level_id: number;
+  section_id: number;
+  promotion_status: 'Promoted' | 'Retained' | 'Conditional';
+  enrollment_status: 'Enrolled' | 'Transferred' | 'Graduated' | 'Dropped';
+}): EnrollmentRecord {
+  const enrollments = getEnrollments();
+  const idx = enrollments.findIndex(e => String(e.student_id) === String(studentId));
+
+  const newRecord: EnrollmentRecord = {
+    id: idx !== -1 ? enrollments[idx].id : Date.now(),
+    student_id: studentId,
+    grade_level_id: payload.grade_level_id,
+    section_id: payload.section_id,
+    school_year: payload.school_year,
+    enrollment_status: payload.enrollment_status,
+    promotion_status: payload.promotion_status,
+    enrollment_mode: 'manual',
+    grade_name: `Grade ${payload.grade_level_id + 6}`,
+    section_name: `Section ${payload.section_id}`,
+  };
+
+  if (idx !== -1) {
+    enrollments[idx] = newRecord;
+  } else {
+    enrollments.push(newRecord);
+  }
+
+  localStorage.setItem(KEYS.enrollments, JSON.stringify(enrollments));
+  return newRecord;
 }
 
 // Re-export for convenience

@@ -3,11 +3,13 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   LayoutDashboard,
+  GraduationCap,
   Users,
   CalendarDays,
   FileBarChart,
   UserCheck,
-  LogOut
+  LogOut,
+  UserCog,
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -27,6 +29,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, setIsOpen }) => {
       name: 'Dashboard',
       path: '/dashboard',
       icon: LayoutDashboard,
+    },
+    {
+      name: 'Enrollment Dashboard',
+      path: '/enrollment-dashboard',
+      icon: GraduationCap,
+    },
+    {
+      name: 'Teachers & Personnel',
+      path: '/teachers',
+      icon: UserCog,
     },
     {
       name: 'Students',

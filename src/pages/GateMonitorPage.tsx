@@ -13,7 +13,31 @@ import {
   User,
   Plus,
   Clock,
+  DoorOpen,
+  DoorClosed,
+  AlertTriangle,
 } from 'lucide-react';
+
+// ─── Gate Schedule Constants ────────────────────────────────────────────────
+const ENTRY_START_H = 7;   // 7:00 AM
+const ENTRY_END_H   = 8;   // 8:00 AM (inclusive up to 8:00)
+const EXIT_START_H  = 15;  // 3:00 PM
+const EXIT_START_M  = 40;  // 3:40 PM
+const EXIT_END_H    = 17;  // 5:00 PM
+
+type GateWindow = 'entry' | 'exit' | 'closed';
+
+function getGateWindow(now: Date): GateWindow {
+  const mins = now.getHours() * 60 + now.getMinutes();
+  const entryStart = ENTRY_START_H * 60;
+  const entryEnd   = ENTRY_END_H   * 60;
+  const exitStart  = EXIT_START_H  * 60 + EXIT_START_M;
+  const exitEnd    = EXIT_END_H    * 60;
+  if (mins >= entryStart && mins <= entryEnd) return 'entry';
+  if (mins >= exitStart  && mins <= exitEnd)  return 'exit';
+  return 'closed';
+}
+// ────────────────────────────────────────────────────────────────────────────
 
 export interface ActivityItem {
   id: string;
@@ -181,19 +205,24 @@ export const GateMonitorPage: React.FC = () => {
         isNew: true,
       };
 
-      const isEntry = response.action === 'time_in' ||
-        response.message?.toLowerCase().includes('entry') ||
-        response.message?.toLowerCase().includes('in');
-      if (isEntry) setTotalEntries(prev => prev + 1);
-      else setTotalExits(prev => prev + 1);
+      // Only count toward session totals if NOT time-blocked
+      const isTimeBlocked = (response as any).time_blocked === true;
+      if (!isTimeBlocked) {
+        const isEntry = response.action === 'time_in' ||
+          response.message?.toLowerCase().includes('entry') ||
+          response.message?.toLowerCase().includes('in');
+        if (isEntry) setTotalEntries(prev => prev + 1);
+        else setTotalExits(prev => prev + 1);
+      }
 
       setActivityLogs(prev => [newActivity, ...prev].slice(0, 6));
 
       // Remove card after 3 seconds — slot goes back to empty [+]
+      const dismissMs = isTimeBlocked ? 4000 : 3000;
       const timer = setTimeout(() => {
         setActivityLogs(prev => prev.filter(item => item.id !== newItemId));
         highlightTimers.current.delete(newItemId);
-      }, 3000);
+      }, dismissMs);
       highlightTimers.current.set(newItemId, timer);
 
       return response;
@@ -224,6 +253,32 @@ export const GateMonitorPage: React.FC = () => {
   const formattedTime = currentTime.toLocaleTimeString('en-US', {
     hour: 'numeric', minute: '2-digit', hour12: true
   });
+
+  // Gate window status (recalculated every second from currentTime)
+  const gateWindow: GateWindow = getGateWindow(currentTime);
+  const gateWindowConfig = {
+    entry: {
+      label: 'ENTRY WINDOW OPEN',
+      sub: '7:00 AM – 8:00 AM  •  Students may enter campus',
+      bg: 'bg-emerald-600',
+      border: 'border-emerald-700',
+      icon: DoorOpen,
+    },
+    exit: {
+      label: 'EXIT WINDOW OPEN',
+      sub: '3:40 PM – 5:00 PM  •  Students may exit campus',
+      bg: 'bg-blue-600',
+      border: 'border-blue-700',
+      icon: DoorOpen,
+    },
+    closed: {
+      label: 'GATE CLOSED',
+      sub: 'Entry: 7:00 AM – 8:00 AM  •  Exit: 3:40 PM – 5:00 PM',
+      bg: 'bg-slate-700',
+      border: 'border-slate-800',
+      icon: DoorClosed,
+    },
+  }[gateWindow];
 
   return (
     <div
@@ -295,6 +350,30 @@ export const GateMonitorPage: React.FC = () => {
             </button>
           </div>
         )}
+
+        {/* ── GATE SCHEDULE STATUS BANNER ── */}
+        <div className={`flex items-center gap-4 px-7 py-3 text-white ${gateWindowConfig.bg} border-b ${gateWindowConfig.border}`}>
+          <gateWindowConfig.icon className="h-5 w-5 shrink-0 opacity-90" />
+          <div className="flex-1 min-w-0">
+            <p className="text-xs font-black uppercase tracking-widest opacity-80 leading-none mb-0.5">
+              Gate Schedule
+            </p>
+            <p className="text-sm font-extrabold leading-tight">{gateWindowConfig.label}</p>
+            <p className="text-[11px] opacity-70 font-medium mt-0.5">{gateWindowConfig.sub}</p>
+          </div>
+          {gateWindow === 'closed' && (
+            <div className="flex items-center gap-1.5 bg-white/10 border border-white/20 rounded-xl px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wide shrink-0">
+              <AlertTriangle className="h-3.5 w-3.5 text-amber-300" />
+              Scans Blocked
+            </div>
+          )}
+          {gateWindow !== 'closed' && (
+            <div className="flex items-center gap-1.5 bg-white/10 border border-white/20 rounded-xl px-3 py-1.5 text-[11px] font-extrabold uppercase tracking-wide shrink-0">
+              <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+              Live
+            </div>
+          )}
+        </div>
 
         {/* ── SCANNER BAR ── */}
         <div className="px-7 py-4 border-b border-slate-100 bg-slate-50">

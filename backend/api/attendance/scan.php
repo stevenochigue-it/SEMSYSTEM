@@ -88,6 +88,45 @@ try {
         $action    = 'time_out';
     }
 
+    // ─── SCHOOL GATE TIME WINDOW ENFORCEMENT ───────────────────────────────
+    // Entry window : 7:00 AM – 8:00 AM
+    // Exit window  : 3:40 PM – 5:00 PM
+    // ────────────────────────────────────────────────────────────────────────
+    $now          = new DateTime('now', new DateTimeZone('Asia/Manila'));
+    $currentMins  = (int)$now->format('H') * 60 + (int)$now->format('i'); // minutes since midnight
+
+    $entryStart = 7  * 60;       // 07:00
+    $entryEnd   = 8  * 60;       // 08:00
+    $exitStart  = 15 * 60 + 40;  // 15:40 (3:40 PM)
+    $exitEnd    = 17 * 60;       // 17:00 (5:00 PM)
+
+    if ($newStatus === 'ENTRY') {
+        if ($currentMins < $entryStart || $currentMins > $entryEnd) {
+            http_response_code(200);
+            echo json_encode([
+                "success"     => false,
+                "time_blocked" => true,
+                "message"     => "ENTRY NOT ALLOWED — Gate entry is only accepted from 7:00 AM to 8:00 AM.",
+                "window"      => ["start" => "7:00 AM", "end" => "8:00 AM"],
+                "current_time" => $now->format('h:i A'),
+            ]);
+            exit;
+        }
+    } else { // EXIT
+        if ($currentMins < $exitStart || $currentMins > $exitEnd) {
+            http_response_code(200);
+            echo json_encode([
+                "success"     => false,
+                "time_blocked" => true,
+                "message"     => "EXIT NOT ALLOWED — Gate exit is only accepted from 3:40 PM to 5:00 PM.",
+                "window"      => ["start" => "3:40 PM", "end" => "5:00 PM"],
+                "current_time" => $now->format('h:i A'),
+            ]);
+            exit;
+        }
+    }
+    // ─── END TIME WINDOW CHECK ──────────────────────────────────────────────
+
     // Insert new gate log
     $insertLog = "INSERT INTO gate_logs (qr_id, status) VALUES (:qr_id, :status)";
     $insertStmt = $db->prepare($insertLog);

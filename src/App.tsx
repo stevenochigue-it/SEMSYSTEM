@@ -5,11 +5,13 @@ import { DataProvider } from './context/DataContext';
 import { Layout } from './components/layout/Layout';
 import { LoginPage } from './pages/LoginPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { EnrollmentDashboardPage } from './pages/EnrollmentDashboardPage';
 import { StudentsPage } from './pages/StudentsPage';
 import { GateMonitorPage } from './pages/GateMonitorPage';
 import { AttendancePage } from './pages/AttendancePage';
 import { ReportsPage } from './pages/ReportsPage';
 import { UserManagementPage } from './pages/UserManagementPage';
+import { TeachersPage } from './pages/TeachersPage';
 import { DevTools } from './components/common/DevTools';
 
 // Helper component for protecting authenticated routes
@@ -67,6 +69,22 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
                   <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/enrollment-dashboard"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <EnrollmentDashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/teachers"
+              element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <TeachersPage />
                 </ProtectedRoute>
               }
             />

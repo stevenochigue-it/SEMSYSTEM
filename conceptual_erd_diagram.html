@@ -182,17 +182,36 @@
         <div class="diagram-box">
             <div class="mermaid">
                 erDiagram
+                    %% ENROLLMENT & TEACHERS SUBSYSTEM
                     GRADE_LEVEL ||--|{ SECTION : "contains"
-                    SECTION ||--|{ STUDENT : "enrolls"
+                    ENROLLMENT }|--|| STUDENT : "assigned to"
+                    ENROLLMENT }|--|| GRADE_LEVEL : "belongs to"
+                    ENROLLMENT }|--|| SECTION : "belongs to"
+                    TEACHER ||--|| SECTION : "advises"
+
+                    %% ATTENDANCE & GATE SUBSYSTEM
                     USER_ACCOUNT ||--|{ STUDENT : "registers"
                     STUDENT ||--|| QR_CODE : "is assigned"
-                    QR_CODE ||--|{ GATE_LOG : "associates passage events for"
+                    QR_CODE ||--|{ GATE_LOG : "generates"
+                    STUDENT ||--|{ ATTENDANCE : "tracks"
+                    GATE_LOG ||--|{ ATTENDANCE : "compiles into"
 
+                    ENROLLMENT {
+                        Attribute School_Year
+                        Attribute Enrollment_Status
+                        Attribute Enrollment_Date
+                    }
                     GRADE_LEVEL {
                         Attribute Grade_Level_Name
                     }
+                    TEACHER {
+                        Attribute Teacher_Full_Name
+                        Attribute Department_Or_Subject
+                        Attribute Contact_Number
+                    }
                     SECTION {
                         Attribute Section_Name
+                        Attribute Assigned_Adviser_Name
                     }
                     USER_ACCOUNT {
                         Attribute Username
@@ -220,11 +239,57 @@
                         Attribute Scan_Date_And_Time
                         Attribute Gate_Passage_Status
                     }
+                    ATTENDANCE {
+                        Attribute Attendance_Date
+                        Attribute Daily_Status
+                        Attribute Total_Hours_Inside
+                    }
             </div>
         </div>
 
         <h2 class="section-title">2. Conceptual Entity & Attribute Inventory</h2>
         <div class="entity-grid">
+
+            <div class="entity-card" style="border: 2px solid #2563eb;">
+                <div class="entity-header" style="background-color: #1e40af;">GRADE_LEVEL (Enrollment/Teachers)</div>
+                <div class="entity-body">
+                    <ul>
+                        <li>Grade Level Name</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="entity-card" style="border: 2px solid #2563eb;">
+                <div class="entity-header" style="background-color: #1e40af;">SECTION (Enrollment/Teachers)</div>
+                <div class="entity-body">
+                    <ul>
+                        <li>Section Name</li>
+                        <li>Assigned Adviser Name</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="entity-card" style="border: 2px solid #2563eb;">
+                <div class="entity-header" style="background-color: #1e40af;">TEACHER (Master Teachers List)</div>
+                <div class="entity-body">
+                    <ul>
+                        <li>Teacher Full Name</li>
+                        <li>Department / Subject</li>
+                        <li>Contact Number</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="entity-card" style="border: 2px solid #2563eb;">
+                <div class="entity-header" style="background-color: #1e40af;">ENROLLMENT (Enrollment/Teachers Table)</div>
+                <div class="entity-body">
+                    <ul>
+                        <li>School Year</li>
+                        <li>Enrollment Status</li>
+                        <li>Enrollment Date</li>
+                    </ul>
+                </div>
+            </div>
 
             <div class="entity-card">
                 <div class="entity-header">USER_ACCOUNT</div>
@@ -242,26 +307,8 @@
                 </div>
             </div>
 
-            <div class="entity-card">
-                <div class="entity-header">GRADE_LEVEL</div>
-                <div class="entity-body">
-                    <ul>
-                        <li>Grade Level Name</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="entity-card">
-                <div class="entity-header">SECTION</div>
-                <div class="entity-body">
-                    <ul>
-                        <li>Section Name</li>
-                    </ul>
-                </div>
-            </div>
-
-            <div class="entity-card">
-                <div class="entity-header">STUDENT</div>
+            <div class="entity-card" style="border: 2px solid #16a34a;">
+                <div class="entity-header" style="background-color: #15803d;">STUDENT (Attendance Subsystem)</div>
                 <div class="entity-body">
                     <ul>
                         <li>Student ID Number</li>
@@ -274,8 +321,8 @@
                 </div>
             </div>
 
-            <div class="entity-card">
-                <div class="entity-header">QR_CODE</div>
+            <div class="entity-card" style="border: 2px solid #16a34a;">
+                <div class="entity-header" style="background-color: #15803d;">QR_CODE (Attendance Subsystem)</div>
                 <div class="entity-body">
                     <ul>
                         <li>QR Value</li>
@@ -284,8 +331,8 @@
                 </div>
             </div>
 
-            <div class="entity-card associative">
-                <div class="entity-header">GATE_LOG (Associative Entity)</div>
+            <div class="entity-card associative" style="border: 2px solid #16a34a;">
+                <div class="entity-header" style="background-color: #15803d;">GATE_LOG (Gate Scans Entity)</div>
                 <div class="entity-body">
                     <ul>
                         <li>Scan Date & Time</li>
@@ -294,28 +341,35 @@
                 </div>
             </div>
 
+            <div class="entity-card" style="border: 2px solid #16a34a;">
+                <div class="entity-header" style="background-color: #15803d;">ATTENDANCE (Dashboard Table)</div>
+                <div class="entity-body">
+                    <ul>
+                        <li>Attendance Date</li>
+                        <li>Daily Status (Present/Late/Absent)</li>
+                        <li>Total Hours Inside</li>
+                    </ul>
+                </div>
+            </div>
+
         </div>
 
-        <h2 class="section-title">3. Relationship Discussion & Associative Entity Rules</h2>
+        <h2 class="section-title">3. Subsystem Breakdown & Relationship Discussion</h2>
 
-        <div class="discussion-box">
-            <strong>1. GRADE_LEVEL contains SECTION (1-to-Many):</strong> One Grade Level contains multiple class sections. Each section belongs to exactly one Grade Level.
+        <div class="discussion-box" style="border-left-color: #2563eb;">
+            <strong>📌 Module 1: Enrollment / Teachers Subsystem (`GRADE_LEVEL` ➔ `SECTION`, `TEACHER` & `ENROLLMENT`)</strong><br>
+            • <code>GRADE_LEVEL</code> contains <code>SECTION</code> (1-to-Many): Each Grade Level contains multiple class sections (connected via <code>sections.grade_level_id</code> Foreign Key).<br>
+            • <code>TEACHER</code> advises <code>SECTION</code> (1-to-1): Assigns a Teacher Adviser to each class section.<br>
+            • <code>ENROLLMENT</code> assigned to <code>STUDENT</code> (Many-to-1): Assigns the student to a Section for the given School Year.<br>
+            • <code>ENROLLMENT</code> belongs to <code>GRADE_LEVEL</code> (Many-to-1): Assigns the student's designated Grade Level.
         </div>
 
-        <div class="discussion-box">
-            <strong>2. SECTION enrolls STUDENT (1-to-Many):</strong> One Section enrolls multiple students. Each student belongs to one designated class section.
-        </div>
-
-        <div class="discussion-box">
-            <strong>3. USER_ACCOUNT registers STUDENT (1-to-Many):</strong> One System User Account (School ICT Coordinator) registers and manages multiple student records in the database.
-        </div>
-
-        <div class="discussion-box">
-            <strong>4. STUDENT is assigned QR_CODE (1-to-1):</strong> Each enrolled student is assigned exactly one unique QR Code credential.
-        </div>
-
-        <div class="discussion-box">
-            <strong>5. GATE_LOG as an Associative Entity (1-to-Many):</strong> <code>GATE_LOG</code> functions as an <strong>Associative Entity</strong> that links a student's assigned <code>QR_CODE</code> with their real-time gate passage events, recording the <code>Scan Date & Time</code> and <code>Gate Passage Status (ENTRY / EXIT)</code> for every scan.
+        <div class="discussion-box" style="border-left-color: #16a34a;">
+            <strong>📌 Module 2: Attendance Subsystem (STUDENT ➔ QR_CODE ➔ GATE_LOG ➔ ATTENDANCE)</strong><br>
+            • <code>STUDENT</code> is assigned <code>QR_CODE</code> (1-to-1): Unique QR code issued upon enrollment.<br>
+            • <code>QR_CODE</code> generates <code>GATE_LOG</code> (1-to-Many): Gate terminal records Time-In / Time-Out scan events.<br>
+            • <code>GATE_LOG</code> compiles into <code>ATTENDANCE</code> (1-to-Many): Gate logs aggregate into daily student <strong>`ATTENDANCE`</strong> records on the Admin Dashboard.<br>
+            • <code>USER_ACCOUNT</code> registers <code>STUDENT</code> (1-to-Many).
         </div>
 
     </div>

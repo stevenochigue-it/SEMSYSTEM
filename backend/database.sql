@@ -35,12 +35,14 @@ CREATE TABLE grade_levels (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
+-- =====================================================
 -- ENTITY 3: SECTIONS
 -- =====================================================
 CREATE TABLE sections (
     id INT AUTO_INCREMENT PRIMARY KEY,
     grade_level_id INT NOT NULL,
     section_name VARCHAR(50) NOT NULL,
+    teacher_adviser_name VARCHAR(100) DEFAULT NULL,
     CONSTRAINT fk_sections_grade_level
         FOREIGN KEY (grade_level_id)
         REFERENCES grade_levels(id)
@@ -74,7 +76,37 @@ CREATE TABLE students (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
--- ENTITY 5: QR CODES
+-- ENTITY 5: ENROLLMENTS (School Year & Dual-Mode Promotion)
+-- =====================================================
+CREATE TABLE enrollments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    grade_level_id INT NOT NULL,
+    section_id INT NOT NULL,
+    school_year VARCHAR(20) NOT NULL DEFAULT '2025-2026',
+    enrollment_status ENUM('Enrolled', 'Transferred', 'Graduated', 'Dropped') NOT NULL DEFAULT 'Enrolled',
+    promotion_status ENUM('Promoted', 'Retained', 'Conditional') NOT NULL DEFAULT 'Promoted',
+    enrollment_mode ENUM('automatic', 'manual') NOT NULL DEFAULT 'automatic',
+    enrollment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_enrollments_student
+        FOREIGN KEY (student_id)
+        REFERENCES students(id)
+        ON UPDATE CASCADE
+        ON DELETE CASCADE,
+    CONSTRAINT fk_enrollments_grade_level
+        FOREIGN KEY (grade_level_id)
+        REFERENCES grade_levels(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT,
+    CONSTRAINT fk_enrollments_section
+        FOREIGN KEY (section_id)
+        REFERENCES sections(id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================================================
+-- ENTITY 6: QR CODES
 -- =====================================================
 CREATE TABLE qr_codes (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -104,6 +136,23 @@ CREATE TABLE gate_logs (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- =====================================================
+-- ENTITY 7: TEACHERS / PERSONNEL
+-- =====================================================
+CREATE TABLE teachers (
+    id               INT AUTO_INCREMENT PRIMARY KEY,
+    employee_id      VARCHAR(30)  DEFAULT NULL UNIQUE,
+    first_name       VARCHAR(50)  NOT NULL,
+    middle_name      VARCHAR(50)  DEFAULT NULL,
+    last_name        VARCHAR(50)  NOT NULL,
+    subject          VARCHAR(100) DEFAULT NULL,
+    grade_level      VARCHAR(30)  DEFAULT NULL,
+    section_advisory VARCHAR(100) DEFAULT NULL,
+    contact_number   VARCHAR(20)  DEFAULT NULL,
+    status           ENUM('active', 'inactive') NOT NULL DEFAULT 'active',
+    created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =====================================================
 -- SEED DATA
 -- =====================================================
 
@@ -116,14 +165,14 @@ INSERT INTO users (username, password, first_name, middle_name, last_name, role,
 INSERT INTO grade_levels (grade_name) VALUES
 ('Grade 7'), ('Grade 8'), ('Grade 9'), ('Grade 10'), ('Grade 11'), ('Grade 12');
 
--- 3. SECTIONS
-INSERT INTO sections (grade_level_id, section_name) VALUES
-(1, 'St. Lorenzo'), (1, 'St. Michael'), (1, 'St. Vincent'), (1, 'St. Raphael'),
-(2, 'St. Barachel'), (2, 'St. Uriel'), (2, 'St. Sealtiel'), (2, 'St. Gabriel'),
-(3, 'St. John'), (3, 'St. Paul'), (3, 'St. Anthony'), (3, 'St. James'),
-(4, 'St. Matthew'), (4, 'St. Luke'), (4, 'St. Thomas'),
-(5, 'GAS - Faithful'), (5, 'GAS - Loyalty'), (5, 'GAS - Patience'),
-(6, 'GAS - Compassionate'), (6, 'GAS - Integrity');
+-- 3. SECTIONS (with assigned Teacher Adviser names)
+INSERT INTO sections (grade_level_id, section_name, teacher_adviser_name) VALUES
+(1, 'St. Lorenzo', 'Maria Santos'), (1, 'St. Michael', 'Juan Dela Cruz'), (1, 'St. Vincent', 'Ana Reyes'), (1, 'St. Raphael', 'Carlos Garcia'),
+(2, 'St. Barachel', 'Elena Torralba'), (2, 'St. Uriel', 'Roberto Mendoza'), (2, 'St. Sealtiel', 'Grace Villareal'), (2, 'St. Gabriel', 'Antonio Aquino'),
+(3, 'St. John', 'Luzviminda Ramos'), (3, 'St. Paul', 'Fernan Custodio'), (3, 'St. Anthony', 'Clara Benitez'), (3, 'St. James', 'Mark Anthony Tan'),
+(4, 'St. Matthew', 'Teresa Bautista'), (4, 'St. Luke', 'Rogelio Corpuz'), (4, 'St. Thomas', 'Sonia Valenzuela'),
+(5, 'GAS - Faithful', 'Dominic Sison'), (5, 'GAS - Loyalty', 'Patricia Lim'), (5, 'GAS - Patience', 'Gabriel Navarro'),
+(6, 'GAS - Compassionate', 'Corazon Abad'), (6, 'GAS - Integrity', 'Ramon Morales');
 
 -- 4. STUDENTS
 INSERT INTO students (student_id_number, first_name, middle_name, last_name, photo, section_id, created_by_user_id) VALUES
@@ -132,13 +181,21 @@ INSERT INTO students (student_id_number, first_name, middle_name, last_name, pho
 ('STU-109283746503', 'Christine Rose', 'A.', 'Pahis', 'christine.jpg', 9, 1),
 ('STU-109283746504', 'Darren', 'J.', 'Watkins', 'darren.jpg', 19, 1);
 
--- 5. QR CODES
+-- 5. ENROLLMENTS
+INSERT INTO enrollments (student_id, grade_level_id, section_id, school_year, enrollment_status, promotion_status, enrollment_mode) VALUES
+(1, 1, 1, '2025-2026', 'Enrolled', 'Promoted', 'automatic'),
+(2, 5, 16, '2025-2026', 'Enrolled', 'Promoted', 'automatic'),
+(3, 3, 9, '2025-2026', 'Enrolled', 'Promoted', 'automatic'),
+(4, 6, 19, '2025-2026', 'Enrolled', 'Promoted', 'manual');
+
+-- 6. QR CODES
 INSERT INTO qr_codes (student_id, qr_value) VALUES
 (1, 'STU-109283746501'),
 (2, 'STU-109283746502'),
 (3, 'STU-109283746503'),
 (4, 'STU-109283746504');
 
--- 6. GATE LOGS
+-- 7. GATE LOGS
 INSERT INTO gate_logs (qr_id, status) VALUES
 (1, 'ENTRY'), (2, 'ENTRY'), (3, 'ENTRY'), (4, 'ENTRY');
+

@@ -1,5 +1,21 @@
 // --- Core Entities -------------------------------------------------------------
 
+export interface Teacher {
+  id?: number;
+  employee_id?: string;
+  first_name: string;
+  middle_name?: string;
+  last_name: string;
+  full_name?: string;
+  subject?: string;
+  grade_level?: string;
+  section_advisory?: string;
+  contact_number?: string;
+  email?: string;
+  status?: 'active' | 'on_leave' | 'inactive';
+  created_at?: string;
+}
+
 export interface GradeLevel {
   grade_level_id?: number;
   id?: number;
@@ -12,6 +28,10 @@ export interface Section {
   section_name: string;
   grade_level_id: number;
   grade_name: string;
+  grade_level?: string;
+  teacher_adviser_name?: string;
+  capacity?: number;
+  enrolled_count?: number;
 }
 
 export interface Student {
@@ -147,6 +167,35 @@ export interface AttendanceFilters {
   status: string;
 }
 
+// --- Enrollment & Promotion ---------------------------------------------------
+
+export interface EnrollmentRecord {
+  id?: number;
+  student_id: number | string;
+  grade_level_id: number;
+  section_id: number;
+  school_year: string;
+  enrollment_status: 'Enrolled' | 'Transferred' | 'Graduated' | 'Dropped';
+  promotion_status: 'Promoted' | 'Retained' | 'Conditional';
+  enrollment_mode: 'automatic' | 'manual';
+  created_at?: string;
+  student_name?: string;
+  grade_name?: string;
+  section_name?: string;
+}
+
+export interface EnrollmentStats {
+  totalEnrolled: number;
+  byGradeLevel: Record<string, number>;
+  byStrand: Record<string, number>;
+  byPromotionStatus: {
+    promoted: number;
+    retained: number;
+    conditional: number;
+  };
+}
+
 // --- Legacy aliases ----------------------------------------------------------
 export type AttendanceRecord = GateLog;
 export type User = SystemAdmin;
+

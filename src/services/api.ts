@@ -1,7 +1,7 @@
 import type {
   Student, GateLog, SystemAdmin, Section,
   ScanResult, DashboardStats, ChartDataPoint,
-  LoginCredentials,
+  LoginCredentials, EnrollmentStats, EnrollmentRecord, Teacher,
 } from '../types';
 
 const API_BASE_URL = '/api';
@@ -38,6 +38,13 @@ export const apiService = {
   // --- Sections --------------------------------------------------------------
   async getSections(): Promise<Section[]> {
     return fetchJson<Section[]>('/sections/index.php');
+  },
+
+  async updateSection(id: number | string, section: Partial<Section>): Promise<Section> {
+    return fetchJson<Section>(`/sections/index.php?id=${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(section),
+    });
   },
 
   // --- Students --------------------------------------------------------------
@@ -163,5 +170,54 @@ export const apiService = {
 
   async deleteUser(id: string): Promise<void> {
     await fetchJson<void>(`/users/index.php?id=${id}`, { method: 'DELETE' });
+  },
+
+  // --- Enrollment & Dual-Mode Promotion --------------------------------------
+  async getEnrollmentStats(): Promise<EnrollmentStats> {
+    return fetchJson<EnrollmentStats>('/enrollment/stats.php');
+  },
+
+  async batchPromoteStudents(payload: { school_year: string; grade_level_id: number; section_id: number }): Promise<{ success: boolean; promotedCount: number }> {
+    return fetchJson('/enrollment/batch-promote.php', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async manualPromoteStudent(payload: {
+    student_id: string | number;
+    school_year: string;
+    grade_level_id: number;
+    section_id: number;
+    promotion_status: 'Promoted' | 'Retained' | 'Conditional';
+    enrollment_status: 'Enrolled' | 'Transferred' | 'Graduated' | 'Dropped';
+  }): Promise<EnrollmentRecord> {
+    return fetchJson<EnrollmentRecord>('/enrollment/manual-promote.php', {
+      method: 'POST',
+      body: JSON.stringify(payload),
+    });
+  },
+
+  // --- Teachers / Personnel ---------------------------------------------------
+  async getTeachers(): Promise<Teacher[]> {
+    return fetchJson<Teacher[]>('/teachers/index.php');
+  },
+
+  async addTeacher(teacher: Omit<Teacher, 'id' | 'created_at' | 'full_name'>): Promise<{ success: boolean; teacher: Teacher }> {
+    return fetchJson('/teachers/index.php', {
+      method: 'POST',
+      body: JSON.stringify(teacher),
+    });
+  },
+
+  async updateTeacher(id: number, teacher: Partial<Teacher>): Promise<{ success: boolean }> {
+    return fetchJson(`/teachers/index.php?id=${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(teacher),
+    });
+  },
+
+  async deleteTeacher(id: number): Promise<void> {
+    await fetchJson(`/teachers/index.php?id=${id}`, { method: 'DELETE' });
   },
 };
